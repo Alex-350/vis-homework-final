@@ -1,0 +1,138 @@
+{
+  "id": "welllog-lithology-bayes-v22",
+  "sceneId": "w4",
+  "title": "岩性识别：高斯朴素贝叶斯",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-01",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "GR 提供泥质线索，但低 GR 的砂岩和灰岩仍可能混淆。本例学习 GR、DEN、CNL 的类内响应分布，逐深度输出三类岩性候选。调节噪声与 GR 系统偏移，看模型如何在新井上失准；换井会改变层序与层厚。",
+      "judge": [
+        {
+          "label": "学习或算法",
+          "value": "高斯朴素贝叶斯",
+          "desc": "实际计算并展示模型/证据"
+        },
+        {
+          "label": "训练资料",
+          "value": "6 井 / 720 点",
+          "desc": "与当前测试井独立"
+        },
+        {
+          "label": "可视验收",
+          "value": "三曲线准确率",
+          "desc": "基线、错误与逐深度核对"
+        },
+        {
+          "label": "难点",
+          "value": "中",
+          "desc": "岩性类别是合成候选，不等于现场定名或地层年代。模型权重不作校准概率解释。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "PROBLEM",
+          "title": "当前做法与问题：先理解专业对象",
+          "html": "<p>岩性定名为储层评价和层间对比提供基础。自然伽马（GR）可提供泥质线索，但密度和中子响应也受孔隙、矿物与流体影响；<b>同一条曲线的区间并不只对应一种岩石</b>。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 1 · 示意关系用于理解特征互补，不是适用于所有地区的岩性阈值。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><rect x=\"20\" y=\"22\" width=\"150\" height=\"110\" fill=\"#f0e7d5\"/><text x=\"35\" y=\"55\">砂岩：可能低 GR</text><text x=\"35\" y=\"91\">孔隙影响 DEN/CNL</text><rect x=\"200\" y=\"22\" width=\"150\" height=\"110\" fill=\"#e3ece3\"/><text x=\"215\" y=\"55\">泥岩：常见高 GR</text><text x=\"215\" y=\"91\">中子响应偏高</text><rect x=\"380\" y=\"22\" width=\"150\" height=\"110\" fill=\"#e4ebf2\"/><text x=\"395\" y=\"55\">灰岩：也可能低 GR</text><text x=\"395\" y=\"91\">密度响应不同</text><text x=\"555\" y=\"63\">多曲线联合</text><text x=\"555\" y=\"98\">仍需标定</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 1 · 示意关系用于理解特征互补，不是适用于所有地区的岩性阈值。</figcaption></figure><p>只用 GR 划分“砂/泥”时，灰岩可能被硬塞进砂岩。人工交会图也会受区块经验与样本不足影响。真正目标是给出<b>可复核的岩性候选和误判位置</b>，而不是把色带当成地层真相。</p>"
+        },
+        {
+          "no": 2,
+          "en": "INTERVENTION",
+          "title": "算法介入点：输入如何变成候选",
+          "html": "<p>本例用六口独立训练井学习每类 GR、DEN、CNL 的均值、方差和先验比例，采用<b>高斯朴素贝叶斯</b>计算类别分数。它让“该点更像哪种已知岩性响应”成为一个可计算问题。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"四步计算链：不同工序承担不同的误差与质控责任。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><rect x=\"15\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"28\" y=\"52\">01</text><text x=\"28\" y=\"83\">独立井标签</text><rect x=\"192\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"205\" y=\"52\">02</text><text x=\"205\" y=\"83\">学习类内分布</text><rect x=\"369\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"382\" y=\"52\">03</text><text x=\"382\" y=\"83\">三曲线联合分类</text><rect x=\"546\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"559\" y=\"52\">04</text><text x=\"559\" y=\"83\">混淆矩阵复核</text><text x=\"20\" y=\"145\">训练、输入、输出和验收在演示里逐一可见，真值只用于独立评价。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">四步计算链：不同工序承担不同的误差与质控责任。</figcaption></figure><p>测试不使用层界和真实岩性，只读取三条观测曲线。三类分数归一化便于比较，但独立假设和分布偏移会使分数失准，<b>高权重不等于正确概率</b>。单 GR 基线仅能给砂/泥两类，作为解释特征互补的弱基线。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "需要准备什么：数据、标注与独立验证",
+          "html": "<p>真实训练标签需来自可靠岩心、岩屑或复核定名，并统一深度与粒度。应按井划分而不是把相邻深度随机拆分；记录井径、流体、仪器与矿物背景，检查类别不均衡。</p><p>演示训练为六井×120 点，测试为独立井 120 点、0.5 m 采样。每次换井改变合成层序与层厚，模型均值、方差和先验保持固定。滑杆模拟观测噪声和 GR 系统偏移，不能模拟全部井间差异。</p>"
+        },
+        {
+          "no": 4,
+          "en": "DIFFICULTY",
+          "title": "难度与参考方向：哪些结论不能越界",
+          "html": "<p>简化生成式只包含砂岩、泥岩、灰岩，真实混积岩和复杂流体响应可能超出模型范围。特征之间相关，朴素独立假设不总成立；高准确率只反映本例分布。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-log-interpretation\">SLB：多曲线解释背景</a>；<a href=\"https://scikit-learn.org/stable/modules/naive_bayes.html\">官方：高斯朴素贝叶斯</a>。本例数值为独立合成教学设定，未调用训练好的现场模型。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "岩性识别：从输入到可复核结果",
+      "lead": [
+        "每一步都对应演示中的输入、固定模型、输出与验收，不以一条平滑曲线替代质控。"
+      ],
+      "stats": [
+        [
+          "训练与测试",
+          "独立井/图"
+        ],
+        [
+          "交互",
+          "换井 / 联动"
+        ],
+        [
+          "实现",
+          "纯前端"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 定名与多曲线深度对齐",
+          "role": "数据",
+          "do": "以岩心/可靠标签为依据统一 GR、DEN、CNL、采样和类别定义，按井隔离。本例直接生成对齐数据。",
+          "effect": "独立训练井与测试井",
+          "trap": "标签深度归位和尺度差异可能制造假误差。"
+        },
+        {
+          "name": "02 学习三类响应分布",
+          "role": "算法",
+          "do": "计算各类均值、方差和先验；小方差设下限，避免个别特征过度支配。",
+          "effect": "三类可解释统计模型",
+          "trap": "特征独立是假设，不是物理定律。"
+        },
+        {
+          "name": "03 逐点计算类别分数",
+          "role": "推理",
+          "do": "仅从测试曲线计算各类高斯分数，输出最高类和归一化权重，不读取真实层界。",
+          "effect": "砂/泥/灰候选与模型权重",
+          "trap": "系统漂移可使模型在高权重下仍误判。"
+        },
+        {
+          "name": "04 按类检查而非只看总分",
+          "role": "质控",
+          "do": "报告准确率、宏 F1、灰岩召回和混淆矩阵，逐深度核对输入和三类权重。",
+          "effect": "错误方向和低分位置",
+          "trap": "少数类漏检可能被总体准确率掩盖。"
+        }
+      ],
+      "metrics": {
+        "title": "怎么算“做对了”",
+        "html": "<figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"四步计算链：不同工序承担不同的误差与质控责任。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><rect x=\"15\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"28\" y=\"52\">01</text><text x=\"28\" y=\"83\">定名与多曲线深度对</text><rect x=\"192\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"205\" y=\"52\">02</text><text x=\"205\" y=\"83\">学习三类响应分布</text><rect x=\"369\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"382\" y=\"52\">03</text><text x=\"382\" y=\"83\">逐点计算类别分数</text><rect x=\"546\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"559\" y=\"52\">04</text><text x=\"559\" y=\"83\">按类检查而非只看总</text><text x=\"20\" y=\"145\">训练、输入、输出和验收在演示里逐一可见，真值只用于独立评价。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">四步计算链：不同工序承担不同的误差与质控责任。</figcaption></figure><p>准确率之外报告三类宏平均 F1 和灰岩召回，混淆矩阵行是真值、列是预测。归一化模型权重不是已校准正确概率。</p>"
+      },
+      "fails": [
+        {
+          "name": "同响应多解",
+          "why": "同岩性不同孔隙/流体可能产生不同曲线。"
+        },
+        {
+          "name": "系统偏移",
+          "why": "新井 GR 刻度偏移会破坏训练关系。"
+        },
+        {
+          "name": "类别缺失",
+          "why": "只训练三类时不能可靠识别未知或混合岩性。"
+        }
+      ]
+    },
+    "demo": {
+      "mode": "page",
+      "html": "demo/index.html",
+      "label": "可运行示范",
+      "intro": "GR 提供泥质线索，但低 GR 的砂岩和灰岩仍可能混淆。本例学习 GR、DEN、CNL 的类内响应分布，逐深度输出三类岩性候选。调节噪声与 GR 系统偏移，看模型如何在新井上失准；换井会改变层序与层厚。",
+      "height": 740
+    }
+  }
+}

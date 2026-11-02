@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>示范：多曲线融合孔隙度解释</title><link rel="stylesheet" href="demo.css"></head>
+<body><div class="panel">
+<div class="demo-head"><div><span class="kicker" id="well-name">合成井 W001</span><h1>从测井响应到孔隙度：看见“泥质偏高”的校正</h1>
+<p class="lead">中子测井对含氢物质敏感，泥质中的束缚水也可能抬高读数。把中子读数直接当孔隙度，会在泥质段偏高。本例用独立标注样本学习 <b>GR + DEN + CNL → 孔隙度</b> 的映射。拖动滑杆，让输入、预测与误差同步变化；点击曲线可逐深度核对。</p></div><button class="btn primary" id="new-well" type="button">换一口井 ↻</button></div>
+<div class="demo-controls"><div class="ctl"><label for="noise">观测噪声 <output id="out-noise">0.6</output></label><input id="noise" type="range" min="0" max="2" step="0.05" value="0.6"></div>
+<div class="ctl"><label for="shale">泥质影响上限 <output id="out-shale">35%</output></label><input id="shale" type="range" min="0" max="0.65" step="0.01" value="0.35"></div>
+</div><div class="demo-body"><section class="demo-charts" aria-label="联动曲线"><div class="legend"><span class="dot truth">合成真值</span><span class="dot model">多曲线模型</span><span class="dot base">CNL 直接读数基线</span><span class="mud">浅色带：泥质偏高段</span></div>
+<svg id="logs" viewBox="0 0 720 230" role="img" aria-label="自然伽马、密度和中子三条输入曲线"></svg>
+<svg id="porosity" viewBox="0 0 720 180" role="img" aria-label="孔隙度真值、模型和中子直接读数对比"></svg>
+<svg id="residual" viewBox="0 0 720 125" role="img" aria-label="模型和基线的逐点误差与复核阈值"></svg>
+</section><aside class="demo-results" aria-label="评价与逐点解释"><div class="readouts"><div class="ro"><span class="k">模型 MAE</span><b id="mae-model">—</b></div><div class="ro"><span class="k">基线 MAE</span><b id="mae-base">—</b></div><div class="ro"><span class="k">误差 ≤ 2 百分点</span><b id="hit">—</b></div><div class="ro"><span class="k">建议复核</span><b id="review">—</b></div></div>
+<p id="note" class="note" aria-live="polite"></p>
+<section class="inspect"><div class="section-head"><h2>逐点核对：这个深度为什么这样解释？</h2><span id="point-depth"></span></div><label class="point-control" for="point">选择深度 <input id="point" type="range" min="0" max="119" step="1" value="62"></label><div id="point-values" class="point-values"></div><p id="point-explain"></p></section>
+<details><summary>展开训练、数据假设与模型系数</summary><p>450 个训练样本来自 6 个独立合成井；本测试井 120 点、0.5 m 采样，深度 2000–2059.5 m。训练不随滑块重做，测试真值不进入预测。输入标准化与系数均仅由训练集计算。</p><p>模型：标准化线性特征的岭回归，λ=0.03。训练过程确实求解系数，并非把真值加噪声当预测。未使用深度网络。</p><div id="coefficients"></div><p>生成式：GR=20+110Vsh；CNL=φ+0.18Vsh；DEN=(1−Vsh)(2.65−1.65φ)+Vsh(2.72−1.72φ)。φ、Vsh 为小数。它们只是让概念可计算的教学关系，不是现场解释标准；不模拟气层、复杂矿物和井眼扩径。</p></details>
+<div class="actions"><button id="reset" type="button">恢复默认</button><button id="export" type="button">导出本次结果 CSV</button><span>同一口井滑动不随机跳动；“换一口井”更新测试井，训练模型保持固定。</span></div>
+<p class="note">本例只解释孔隙度，不预测渗透率或饱和度。“复核”基于合成真值误差与训练范围检查，用于教学验收；现场没有全井真值时，需要岩心与独立质控，不能照搬此标记。所有数据均为合成资料。</p>
+</aside></div></div><script src="demo.js"></script></body></html>

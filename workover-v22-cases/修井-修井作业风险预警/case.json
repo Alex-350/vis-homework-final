@@ -1,0 +1,137 @@
+{
+  "id": "workover-warning-v22",
+  "sceneId": "wo4",
+  "title": "修井作业风险预警：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "磨铣、循环、打捞等工序的正常参数水平不同。若忽略工序切换，统一阈值可能误报；异常检测应提供复核提示，而非自动判定事故。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "工序条件化中位数 / MAD 异常检测",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "异常分数、报警与误报漏报",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "只监测一个合成复合参数，不识别具体事故、不提供井控处置或承诺提前量。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"修井作业风险预警专业概念\"><g fill=\"#354449\" font-size=\"14\"><path d=\"M25 115H200V65H330L360 30L390 65H430\" stroke=\"#2f7d6b\" fill=\"none\" stroke-width=\"4\"/><path d=\"M200 20V145\" stroke=\"#b26a39\" stroke-dasharray=\"5 4\"/><text x=\"450\" y=\"65\">工序切换可改变正常水平</text><text x=\"450\" y=\"105\">异常应相对同工序基线判断</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"修井概念图\"><g font-size=\"17\" fill=\"#345647\"><rect x=\"25\" y=\"30\" width=\"165\" height=\"105\" fill=\"#e0edda\"/><text x=\"40\" y=\"70\">工序 / 井史 / 响应</text><path d=\"M205 80H270\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"65\">学习或检索 → 证据与误差</text><text x=\"300\" y=\"115\">候选不等于现场已确认结论</text></g></svg><p>磨铣、循环、打捞等工序的正常参数水平不同。若忽略工序切换，统一阈值可能误报；异常检测应提供复核提示，而非自动判定事故。</p><p>概念示意，不是工具结构或施工图。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：已知工序标签与复合过程参数代理。方法：工序条件化中位数 / MAD 异常检测。输出：异常分数、报警与误报漏报。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>分别收集正常工序段</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习中位数与 MAD</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>切换条件化基线</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>对照事件区间验收</p><small>误差与来源</small></div></div><p>工序分类 → 稳健基线 → 偏离检测 → 复核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要 已知工序标签与复合过程参数代理；按独立井、作业批次或连续工序划分数据，保留复测和验证来源。不能随机混合相邻采样以虚高效果。</p><p>所有数据为教学合成：案例库 90 条；损伤分类训练 360 点；预警每工序正常样本 300 点；周期预测独立划分训练 300、校准 100、测试 100 井次。工具选型为虚拟规则库，不训练模型。训练种子 17，测试初始种子 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>只监测一个合成复合参数，不识别具体事故、不提供井控处置或承诺提前量。</p><p><a href=\"https://glossary.slb.com/en/terms/f/fishing_tool\">SLB：打捞工具概念</a>；<a href=\"https://glossary.slb.com/en/terms/o/overshot\">SLB：外抓取工具概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">线性模型原理</a>。合成公式与代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "修井作业风险预警：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 分别收集正常工序段",
+          "role": "数据",
+          "do": "已知工序标签与复合过程参数代理按独立井和工序规范来源。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习中位数与 MAD",
+          "role": "学习",
+          "do": "工序条件化中位数 / MAD 异常检测；依据案例明确训练、校准或规则边界。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 切换条件化基线",
+          "role": "推理",
+          "do": "工序分类 → 稳健基线 → 偏离检测 → 复核；实时滑块改变输入。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 · 逐时刻复核",
+          "role": "验收",
+          "do": "对照合成前兆窗口，逐时刻统计误报、漏报和 F1。本例未计算事件级提前量，不将采样点 F1 当作事故级检出率。",
+          "effect": "基线比较或来源审核",
+          "trap": "只监测一个合成复合参数，不识别具体事故、不提供井控处置或承诺提前量。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>工序分类 → 稳健基线 → 偏离检测 → 复核</p><p>案例检索保留来源编号；规则工具选型保留不兼容和未核实条件；损伤识别用准确率；风险预警用 F1、误报和漏报；周期预测用 MAE、区间宽度与独立测试覆盖率。覆盖率不等于每个个体的保证。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "只监测一个合成复合参数，不识别具体事故、不提供井控处置或承诺提前量。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "id": "welllog-repair-crosscurve-v22",
+  "sceneId": "w5",
+  "title": "测井数据修复：跨曲线岭回归 + 校准区间",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-01",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "密度曲线缺失时，连接两端可能把真实层间变化抹平。本例只用仍可用的 GR、CNL 和训练井学习到的关系重建 DEN。拖动缺口长度与噪声，看何时跨曲线模型更好、何时线性插值反而更准。",
+      "judge": [
+        {
+          "label": "学习或算法",
+          "value": "跨曲线岭回归 + 校准区间",
+          "desc": "实际计算并展示模型/证据"
+        },
+        {
+          "label": "训练资料",
+          "value": "6 训练井 + 1 校准井",
+          "desc": "与当前测试井独立"
+        },
+        {
+          "label": "可视验收",
+          "value": "学习修复 MAE",
+          "desc": "基线、错误与逐深度核对"
+        },
+        {
+          "label": "难点",
+          "value": "中",
+          "desc": "真值只用于合成遮挡验收；现场没有全段真值。修复值必须保留来源，本例不修复气层解释或井径扩径等物理异常。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "PROBLEM",
+          "title": "当前做法与问题：先理解专业对象",
+          "html": "<p>测井缺失段可能来自采集、传输或井眼环境。人工插值能维持连续性，却未必保留地层变化。<b>修复值必须带来源标记</b>，否则后续解释可能把模型输出当成真实测量。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 1 · 连接两端与利用辅助曲线是两种不同的信息来源，不保证后者总更好。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><path d=\"M20 85L85 65L145 70M265 115L330 100L390 105\" fill=\"none\" stroke=\"#242b2e\" stroke-width=\"3\"/><path d=\"M145 70L265 115\" stroke=\"#41699b\" stroke-dasharray=\"6 4\" stroke-width=\"3\"/><rect x=\"148\" y=\"20\" width=\"115\" height=\"120\" fill=\"#e6f1ec\" opacity=\".6\"/><text x=\"430\" y=\"50\">两端插值：不知道缺口内部发生什么</text><text x=\"430\" y=\"85\">辅助曲线：提供独立的层间响应线索</text><text x=\"430\" y=\"120\">保留原观测、掩码和插补来源</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 1 · 连接两端与利用辅助曲线是两种不同的信息来源，不保证后者总更好。</figcaption></figure><p>本例只遮掉 DEN，GR 与 CNL 仍然可用。隐去的 DEN 真值单独保留作验收，<b>绝不进入插补输入或缺口两端之外的模型计算</b>。它不解决三条曲线同时缺失或不可修复井况。</p>"
+        },
+        {
+          "no": 2,
+          "en": "INTERVENTION",
+          "title": "算法介入点：输入如何变成候选",
+          "html": "<p>用六口独立完整训练井拟合 [GR, CNL, GR×CNL]→DEN 的岭回归，标准化参数只由训练集确定。缺口内用模型前向预测，缺口外保留实测；线性插值基线只读取两端。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"四步计算链：不同工序承担不同的误差与质控责任。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><rect x=\"15\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"28\" y=\"52\">01</text><text x=\"28\" y=\"83\">完整训练井</text><rect x=\"192\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"205\" y=\"52\">02</text><text x=\"205\" y=\"83\">学习跨曲线关系</text><rect x=\"369\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"382\" y=\"52\">03</text><text x=\"382\" y=\"83\">仅缺口插补</text><rect x=\"546\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"559\" y=\"52\">04</text><text x=\"559\" y=\"83\">掩码段误差与来源</text><text x=\"20\" y=\"145\">训练、输入、输出和验收在演示里逐一可见，真值只用于独立评价。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">四步计算链：不同工序承担不同的误差与质控责任。</figcaption></figure><p>另用独立校准井的残差构造 90% 教学预测区间，显示实际覆盖率。观测噪声、输入偏移和缺口分布会破坏覆盖前提；区间不是每个个体的保证。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "需要准备什么：数据、标注与独立验证",
+          "html": "<p>真实资料需原始曲线、缺失/异常掩码、井径与维护记录，以及辅助曲线质量。先明确“缺失原因是否允许插补”，再按井隔离训练、校准和测试；标准化不能访问测试真值。</p><p>本例训练 720 点、校准井 120 点、独立测试井 120 点。缺口长 5–60 点，0.5 m/点；换井改变层序与缺口中心。CSV 对缺口 DEN 留空，保留 masked 与 source 字段，便于下游追溯。</p>"
+        },
+        {
+          "no": 4,
+          "en": "DIFFICULTY",
+          "title": "难度与参考方向：哪些结论不能越界",
+          "html": "<p>同层短缺口适合插值，复杂层段则可能从辅助曲线受益；模型不保证总胜出。真实缺失无真值时，应通过完整井段遮挡实验、独立井验证和下游物理一致性复核，不以曲线“平滑”代替精度。</p><p><a href=\"https://scikit-learn.org/stable/modules/impute.html\">官方：模型插补与缺失数据</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-log-interpretation\">SLB：测井物理响应与解释背景</a>。演示不是掩码自编码器或现场解释软件。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "测井数据修复：从输入到可复核结果",
+      "lead": [
+        "每一步都对应演示中的输入、固定模型、输出与验收，不以一条平滑曲线替代质控。"
+      ],
+      "stats": [
+        [
+          "训练与测试",
+          "独立井/图"
+        ],
+        [
+          "交互",
+          "换井 / 联动"
+        ],
+        [
+          "实现",
+          "纯前端"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 保留原始值与缺失掩码",
+          "role": "数据",
+          "do": "明确遮挡起止、曲线单位和仍可用数据；原始 DEN 缺口为 null，真值在单独验收数组。",
+          "effect": "可追踪的观测与掩码",
+          "trap": "不能先填真值再假装模型修复。"
+        },
+        {
+          "name": "02 从独立完整井学习",
+          "role": "算法",
+          "do": "仅在训练井上拟合标准化回归，独立校准井估计残差分位数。",
+          "effect": "固定映射与校准半宽",
+          "trap": "校准井不是训练井，更不能拿测试误差调区间。"
+        },
+        {
+          "name": "03 只在缺口内插补",
+          "role": "推理",
+          "do": "从 GR、CNL 及交互项预测 DEN；缺口外保留观测。并行计算仅使用缺口两端的线性基线。",
+          "effect": "预测曲线与 observed/imputed 来源",
+          "trap": "辅助曲线异常时，跨曲线模型同样可能失效。"
+        },
+        {
+          "name": "04 只在遮挡段验收",
+          "role": "质控",
+          "do": "比较两种方法 MAE、缺口长度和区间实际覆盖率，逐点显示输入与来源，导出 CSV。",
+          "effect": "公平的掩码段评价",
+          "trap": "把缺口外样本混入指标会虚高修复效果。"
+        }
+      ],
+      "metrics": {
+        "title": "怎么算“做对了”",
+        "html": "<figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"四步计算链：不同工序承担不同的误差与质控责任。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g fill=\"#242b2e\" font-size=\"13\"><rect x=\"15\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"28\" y=\"52\">01</text><text x=\"28\" y=\"83\">保留原始值与缺失掩</text><rect x=\"192\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"205\" y=\"52\">02</text><text x=\"205\" y=\"83\">从独立完整井学习</text><rect x=\"369\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"382\" y=\"52\">03</text><text x=\"382\" y=\"83\">只在缺口内插补</text><rect x=\"546\" y=\"25\" width=\"158\" height=\"90\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"559\" y=\"52\">04</text><text x=\"559\" y=\"83\">只在遮挡段验收</text><text x=\"20\" y=\"145\">训练、输入、输出和验收在演示里逐一可见，真值只用于独立评价。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">四步计算链：不同工序承担不同的误差与质控责任。</figcaption></figure><p>MAE 与区间覆盖率仅在被遮挡段统计，单位 g/cm³。插值和回归使用同一缺口；校准半宽来自独立井，不能用测试误差回调。</p>"
+      },
+      "fails": [
+        {
+          "name": "辅助曲线也损坏",
+          "why": "模型失去有效输入，不能继续盲补。"
+        },
+        {
+          "name": "过度平滑",
+          "why": "两端插值可能抹掉层间突变。"
+        },
+        {
+          "name": "区间失准",
+          "why": "测试噪声或地层差异可能降低校准区间覆盖。"
+        }
+      ]
+    },
+    "demo": {
+      "mode": "page",
+      "html": "demo/index.html",
+      "label": "可运行示范",
+      "intro": "密度曲线缺失时，连接两端可能把真实层间变化抹平。本例只用仍可用的 GR、CNL 和训练井学习到的关系重建 DEN。拖动缺口长度与噪声，看何时跨曲线模型更好、何时线性插值反而更准。",
+      "height": 740
+    }
+  }
+}

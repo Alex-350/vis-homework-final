@@ -1,0 +1,142 @@
+{
+  "id": "welllog-porosity-fusion-v2",
+  "sceneId": "w2",
+  "title": "储层参数智能解释：多曲线融合孔隙度",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-10-31",
+  "methods": [
+    "ts",
+    "opt"
+  ],
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "测井仪器记录的是岩石的物理响应，并不直接测出“储层有多好”。本例选孔隙度作为一个可解释的小问题：当泥质把中子曲线抬高时，怎样结合自然伽马和密度，把 apparent response 变成可复核的孔隙度候选？",
+      "judge": [
+        {
+          "label": "数据形态",
+          "value": "多曲线序列",
+          "desc": "同一深度的 GR、DEN、CNL 必须配对"
+        },
+        {
+          "label": "标注来源",
+          "value": "岩心 / 可靠解释",
+          "desc": "演示用合成真值，现场标签需深度归位"
+        },
+        {
+          "label": "可见收益",
+          "value": "减轻泥质偏差",
+          "desc": "对照单 CNL 读数，展示偏差被校正的条件"
+        },
+        {
+          "label": "难度",
+          "value": "中",
+          "desc": "跨井迁移、气层与井眼环境是主要卡点"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "PROBLEM",
+          "title": "当前做法与问题：把曲线读数当成孔隙度，会错在哪？",
+          "html": "<p><b>孔隙度</b>决定岩石可容纳流体的空间比例，是储层评价的基础，但不等于渗透率，更不直接代表含油量。解释员通常把密度、中子等曲线与岩心配对，结合岩性和井况进行校正。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 1 · 先理解岩石中的空间，再理解测井响应。示意比例不用于物性计算。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><circle cx=\"20\" cy=\"25\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"33\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"46\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"59\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"72\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"85\" cy=\"25\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"98\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"111\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"124\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"137\" cy=\"25\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"20\" cy=\"48\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"33\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"46\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"59\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"72\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"85\" cy=\"48\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"98\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"111\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"124\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"137\" cy=\"48\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"20\" cy=\"71\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"33\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"46\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"59\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"72\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"85\" cy=\"71\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"98\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"111\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"124\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"137\" cy=\"71\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"20\" cy=\"94\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"33\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"46\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"59\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"72\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"85\" cy=\"94\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"98\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"111\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"124\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"137\" cy=\"94\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"20\" cy=\"117\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"33\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"46\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"59\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"72\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"85\" cy=\"117\" r=\"4.2\" fill=\"#2f7d6b\"/><circle cx=\"98\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"111\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"124\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><circle cx=\"137\" cy=\"117\" r=\"4.2\" fill=\"#d8c7a6\"/><g fill=\"#242b2e\" font-size=\"15\"><text x=\"185\" y=\"42\">孔隙度 φ = 孔隙体积 / 岩石总体积</text><text x=\"185\" y=\"78\">绿色：孔隙；米色：岩石颗粒（仅示意）</text><text x=\"185\" y=\"114\">储集空间 ≠ 连通能力；孔隙度不能替代渗透率</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 1 · 先理解岩石中的空间，再理解测井响应。示意比例不用于物性计算。</figcaption></figure><p>中子测井主要对含氢物质响应；泥质中的束缚水会让读数偏高。如果把 CNL 直接当孔隙度，泥质段可能看起来“孔隙很多”，实际却是<b>响应来源混淆</b>。密度响应、GR 提供的泥质线索可帮助区分，但井径扩径、气体和矿物变化也会带来多解。</p>"
+        },
+        {
+          "no": 2,
+          "en": "INTERVENTION",
+          "title": "AI 能做什么：学习多条曲线之间的校正关系",
+          "html": "<p>本例用<b>岭回归</b>学习 [GR, DEN, CNL] 到孔隙度的映射。先用训练集计算均值和标准差，再求解带 L2 惩罚的回归系数。新井只带入观测曲线计算，不读取真值，也不一边看测试答案一边训练。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 2 · 模型替代多曲线经验组合中的部分映射，不替代地质解释与质控。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g font-size=\"13\" fill=\"#242b2e\"><rect x=\"16\" y=\"18\" width=\"155\" height=\"122\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"30\" y=\"45\">GR：泥质响应线索</text><text x=\"30\" y=\"80\">DEN：体积密度</text><text x=\"30\" y=\"115\">CNL：含氢响应</text><text x=\"190\" y=\"78\">→</text><rect x=\"220\" y=\"38\" width=\"170\" height=\"80\" rx=\"6\" fill=\"#f1ece2\"/><text x=\"235\" y=\"68\">独立样本学习映射</text><text x=\"235\" y=\"94\">岭回归 / 标准化</text><text x=\"410\" y=\"78\">→</text><text x=\"445\" y=\"64\">孔隙度候选曲线</text><text x=\"445\" y=\"100\">岩心与井况复核</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 2 · 模型替代多曲线经验组合中的部分映射，不替代地质解释与质控。</figcaption></figure><p>它替代的是重复执行的<b>多曲线经验组合</b>，输出仍是候选。演示选择清晰的浅层模型，是为了能把某个深度的预测拆成截距和三个输入项，看到模型怎样修正 CNL 的泥质偏高；并未声称实现深度网络或通用储层解释。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "需要准备什么：标签、尺度与井间隔离",
+          "html": "<p><b>曲线：</b>同深度 GR（API）、DEN（g/cm³）、CNL（v/v），先检查缺失、单位、采样间隔与井径异常。<b>标签：</b>岩心孔隙度或经过复核的解释值，统一孔隙度定义并做深度归位；不能默认岩心总孔隙度与测井有效孔隙度完全等价。</p><figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 3 · 独立划分的不是随机相邻像素，而是不同井的数据来源。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g font-size=\"13\" fill=\"#242b2e\"><rect x=\"16\" y=\"25\" width=\"285\" height=\"88\" fill=\"#e6f1ec\"/><text x=\"30\" y=\"56\">训练：6 口合成井 × 75 点 = 450 点</text><text x=\"30\" y=\"87\">计算输入均值、尺度与回归系数</text><rect x=\"335\" y=\"25\" width=\"365\" height=\"88\" fill=\"#f3ece0\"/><text x=\"350\" y=\"56\">测试：独立合成井，120 点 / 0.5 m 间隔</text><text x=\"350\" y=\"87\">只前向预测；真值仅用于验收</text><text x=\"20\" y=\"145\">现场应按井划分，不能把相邻深度点随机拆分后报告高分。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 3 · 独立划分的不是随机相邻像素，而是不同井的数据来源。</figcaption></figure><p>演示固定 450 个训练样本和 120 个测试点；滑块只改变测试观测噪声与泥质影响。所有生成关系、泥质响应系数和井资料均为教学设定，不是从油田公开数据训练的现场模型。</p>"
+        },
+        {
+          "no": 4,
+          "en": "DIFFICULTY",
+          "title": "难度与参考方向：什么时候需要交回人工？",
+          "html": "<p>① <b>高噪声：</b>曲线误差传入孔隙度；② <b>输入超范围：</b>模型在陌生井况上外推，误差可能失控；③ <b>缺失机制：</b>气层、复杂矿物和扩径不在本例生成式中，即使曲线看起来平滑，也可能解释错误。</p><p>改进路线：先做井况与尺度校正，再引入分岩性模型、跨井验证及物理约束。真实场景无法知道每个深度的真值，应以独立岩心、井况和解释一致性复核，不能把演示中的误差红点照搬为现场报警。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-porosity\">SLB：孔隙度与中子／密度响应</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-log-interpretation\">SLB：测井解释与多曲线背景</a>。生成式及可运行代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "一口独立测试井的孔隙度解释流程",
+      "lead": [
+        "从“多条曲线靠经验合看”，变成“固定模型批量预测 + 定位需要复核的深度”。下面每一步均能在演示的输入、系数、预测与误差中找到对应。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "450 点"
+        ],
+        [
+          "独立测试",
+          "120 点"
+        ],
+        [
+          "采样间隔",
+          "0.5 m"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "深度对齐与曲线质控",
+          "role": "数据",
+          "do": "把 GR、DEN、CNL 与标签统一到同一深度基准，校验单位、空值和井眼环境。本例直接生成对齐曲线，以便聚焦映射原理。",
+          "effect": "得到同一深度的一组物理响应，而不是三条错位的独立曲线。",
+          "trap": "井径异常和岩心深度归位错误会污染标签，不能靠模型自动解决。"
+        },
+        {
+          "name": "只在训练井上学习映射",
+          "role": "算法",
+          "do": "用 6 口合成井共 450 点计算标准化参数，并求解岭回归系数；训练完成后固定模型。展开演示说明可以看到实际系数。",
+          "effect": "得到可复用的 GR / DEN / CNL → φ 映射，避免随测试滑块重复拟合。",
+          "trap": "若用全数据标准化或随机混入相邻深度，会造成数据泄漏。"
+        },
+        {
+          "name": "独立井前向预测与范围检查",
+          "role": "解释",
+          "do": "对 120 个测试深度逐点预测，同时检查输入是否越过训练范围。并行计算直接 CNL 读数基线，保留原曲线供追溯。 点击“换一口井”可切换地层起伏、泥质段位置和固定噪声种子，考察同一个模型在不同井上的表现。",
+          "effect": "形成候选孔隙度曲线、逐点误差和待复核深度；输入输出可在相同深度线上联动查看。",
+          "trap": "岭回归不是因果解释，各特征项的数值贡献不能当作实际岩石组分。"
+        },
+        {
+          "name": "按深度复核并独立验收",
+          "role": "质控",
+          "do": "统计 MAE 与误差≤2百分点的比例；点击曲线或拖动深度滑块，核对原始输入、真值、模型值与基线。导出 CSV 保留全井结果。",
+          "effect": "明确模型在哪些条件优于基线，哪些深度需要人工复核。",
+          "trap": "本例全井真值已知才可计算逐点误差；现场只能在可靠标注或岩心样点独立验收。"
+        }
+      ],
+      "metrics": {
+        "title": "怎么算“做对了”：不只看一条平滑曲线",
+        "html": "<figure style=\"margin:14px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"图 4 · 四步流程与可运行演示一一对应。\"><rect width=\"720\" height=\"165\" rx=\"7\" fill=\"#fbfaf6\"/><g font-size=\"12\" fill=\"#242b2e\"><rect x=\"15\" y=\"30\" width=\"158\" height=\"76\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"28\" y=\"56\">01 对齐与校正</text><text x=\"28\" y=\"85\">GR / DEN / CNL</text><rect x=\"192\" y=\"30\" width=\"158\" height=\"76\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"205\" y=\"56\">02 标准化并训练</text><text x=\"205\" y=\"85\">训练均值与系数</text><rect x=\"369\" y=\"30\" width=\"158\" height=\"76\" rx=\"6\" fill=\"#e6f1ec\"/><text x=\"382\" y=\"56\">03 独立井解释</text><text x=\"382\" y=\"85\">φ̂(z) 与输入范围</text><rect x=\"546\" y=\"30\" width=\"158\" height=\"76\" rx=\"6\" fill=\"#f2ece1\"/><text x=\"559\" y=\"56\">04 误差与复核</text><text x=\"559\" y=\"85\">基线 / 误差 / 来源</text><text x=\"20\" y=\"143\">每一步都在演示中可追踪：输入曲线 → 固定模型 → 预测曲线 → 逐点核对。</text></g></svg><figcaption style=\"font-size:11px;color:#79828a;margin-top:5px\">图 4 · 四步流程与可运行演示一一对应。</figcaption></figure><p><b>MAE</b> = 所有测试深度的 |预测−真值| 平均值，单位为<b>孔隙度百分点</b>；预测 20%、真值 18% 的误差是 2 百分点，不是 2% 相对误差。命中比例使用 ±2 百分点门槛。复核标记取“超门槛或输入超范围”的并集，不把它包装成校准概率。</p><p>基线为 CNL 直接读数，仅用于展示泥质偏差，不代表现场最强传统方法；下一步真实验证应加入经过泥质和岩性校正的密度—中子方法。</p>"
+      },
+      "fails": [
+        {
+          "name": "泥质响应被当作孔隙",
+          "why": "CNL 偏高可能来自束缚水；需多曲线和区域认识约束。"
+        },
+        {
+          "name": "噪声放大 / 基线反胜",
+          "why": "低泥质时 CNL 已接近真值，多输入的噪声可能抵消融合收益。"
+        },
+        {
+          "name": "训练未覆盖的新井况",
+          "why": "矿物、气体或井眼变化可能破坏生成关系，输入不越界也不能保证正确。"
+        }
+      ]
+    },
+    "demo": {
+      "mode": "page",
+      "html": "demo/index.html",
+      "label": "可运行示范",
+      "intro": "沿用老师样例的紧凑 SVG 实验台：拖动噪声与泥质滑杆，观察三条输入、候选孔隙度和误差；点击曲线逐深度解释。 点击标题右侧“换一口井 ↻”更换独立测试井，参数保留、模型固定。",
+      "height": 720
+    }
+  }
+}

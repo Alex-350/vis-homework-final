@@ -1,0 +1,137 @@
+{
+  "id": "workover-fishing-v22",
+  "sceneId": "wo2",
+  "title": "落物打捞工具智能选型：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "井下落物的尺寸、内外形态和可接近性影响候选工具。外抓取依赖外表面，内抓取依赖可进入内孔；还需要核实通行空间与井况。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "工具关系库 + 兼容规则检索",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "兼容候选和未验证条件",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "无量纲尺寸不能换算现场工具规格，未验证抓取面、载荷或实际可打捞性。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"落物打捞工具智能选型专业概念\"><g fill=\"#354449\" font-size=\"14\"><path d=\"M60 30V130H150V30M85 45V115H125V45\" fill=\"none\" stroke=\"#2f7d6b\" stroke-width=\"5\"/><text x=\"250\" y=\"65\">外抓取：需要外表面证据</text><text x=\"250\" y=\"105\">内抓取：需要可进入内孔</text><text x=\"250\" y=\"140\">几何兼容不等于已确认可打捞</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"修井概念图\"><g font-size=\"17\" fill=\"#345647\"><path d=\"M50 25V145M170 25V145M85 65V135M135 65V135\" stroke=\"#77978a\" stroke-width=\"10\"/><text x=\"240\" y=\"65\">外抓取：需要外表面可接近</text><text x=\"240\" y=\"115\">内抓取：需要内孔可进入；同时检查通行空间</text></g></svg><p>井下落物的尺寸、内外形态和可接近性影响候选工具。外抓取依赖外表面，内抓取依赖可进入内孔；还需要核实通行空间与井况。</p><p>概念示意，不是工具结构或施工图。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：虚拟尺寸区间、空间条件与抓取关系。方法：工具关系库 + 兼容规则检索。输出：兼容候选和未验证条件。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>整理落物与工具关系</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>筛选尺寸兼容</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>筛选空间并排序</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>展示淘汰与待核实理由</p><small>误差与来源</small></div></div><p>落物条件 → 工具关系 → 几何过滤 → 待核实候选。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要 虚拟尺寸区间、空间条件与抓取关系；按独立井、作业批次或连续工序划分数据，保留复测和验证来源。不能随机混合相邻采样以虚高效果。</p><p>所有数据为教学合成：案例库 90 条；损伤分类训练 360 点；预警每工序正常样本 300 点；周期预测独立划分训练 300、校准 100、测试 100 井次。工具选型为虚拟规则库，不训练模型。训练种子 17，测试初始种子 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>无量纲尺寸不能换算现场工具规格，未验证抓取面、载荷或实际可打捞性。</p><p><a href=\"https://glossary.slb.com/en/terms/f/fishing_tool\">SLB：打捞工具概念</a>；<a href=\"https://glossary.slb.com/en/terms/o/overshot\">SLB：外抓取工具概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">线性模型原理</a>。合成公式与代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "落物打捞工具智能选型：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 整理落物与工具关系",
+          "role": "数据",
+          "do": "虚拟尺寸区间、空间条件与抓取关系按独立井和工序规范来源。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 筛选尺寸兼容",
+          "role": "学习",
+          "do": "工具关系库 + 兼容规则检索；依据案例明确训练、校准或规则边界。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 筛选空间并排序",
+          "role": "推理",
+          "do": "落物条件 → 工具关系 → 几何过滤 → 待核实候选；实时滑块改变输入。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 展示淘汰与待核实理由",
+          "role": "验收",
+          "do": "与相同测试条件下的基线或证据对照，检查 无量纲尺寸不能换算现场工具规格，未验证抓取面、载荷或实际可打捞性。",
+          "effect": "基线比较或来源审核",
+          "trap": "无量纲尺寸不能换算现场工具规格，未验证抓取面、载荷或实际可打捞性。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>落物条件 → 工具关系 → 几何过滤 → 待核实候选</p><p>案例检索保留来源编号；规则工具选型保留不兼容和未核实条件；损伤识别用准确率；风险预警用 F1、误报和漏报；周期预测用 MAE、区间宽度与独立测试覆盖率。覆盖率不等于每个个体的保证。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "无量纲尺寸不能换算现场工具规格，未验证抓取面、载荷或实际可打捞性。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

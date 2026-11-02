@@ -1,0 +1,57 @@
+/* 示范页样式。运行在沙箱 iframe 里，随便写，不影响主站。 */
+:root{
+  --ink:#242b2e; --ink-2:#4d565b; --ink-3:#79828a;
+  --line:#e9e4d8; --jade:#2f7d6b; --jade-l:#e6f1ec;
+  --clay:#b26a39; --paper:#fbfaf6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:18px 20px 24px;background:var(--paper);color:var(--ink);
+  font-family:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-size:13px;line-height:1.7;
+}
+.panel{max-width:none;width:100%}
+h1{font-size:19px;margin:0 0 6px;letter-spacing:-.01em}
+.lead{margin:0 0 16px;color:var(--ink-2);font-size:12.5px;line-height:1.78}
+.ctl{display:flex;align-items:center;gap:14px;margin-bottom:9px}
+.ctl label{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:7px;min-width:170px}
+.ctl output{font-family:ui-monospace,monospace;font-size:13px;color:var(--jade);font-weight:600}
+.ctl input[type=range]{flex:1;accent-color:var(--jade);height:18px}
+svg{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+#ratio{margin-top:-1px;border-top-left-radius:0;border-top-right-radius:0}
+.readouts{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  margin-top:12px;
+}
+.ro{background:#fff;padding:9px 12px}
+.ro .k{display:block;font-size:10px;color:var(--ink-3);letter-spacing:.06em}
+.ro b{font-family:ui-monospace,monospace;font-size:13px;font-weight:600}
+.ro b.ok{color:var(--jade)}
+.ro b.bad{color:var(--clay)}
+.note{margin:12px 0 0;font-size:12px;color:var(--ink-3);line-height:1.75}
+.note b{color:var(--ink)}
+
+/* 保持样例底色、字号、控件和读数样式；增加逐点解释。 */
+.panel{max-width:none;width:100%}h2{font-size:13px;margin:0}.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:10.5px;margin:12px 0 6px;color:var(--ink-2)}.dot:before{content:"";display:inline-block;width:16px;height:2px;vertical-align:middle;margin-right:5px}.truth:before{background:#2f7d6b}.model:before{background:#b26a39}.base:before{background:#41699b}.mud{background:#f4f7eb;padding:0 4px}#porosity,#residual{margin-top:-1px;border-top-left-radius:0;border-top-right-radius:0}.inspect,details{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}.section-head{display:flex;justify-content:space-between;gap:10px}.section-head span{font-family:monospace;color:var(--jade)}.point-control{display:flex;gap:12px;align-items:center;margin:10px 0;font-size:12px}.point-control input{flex:1;accent-color:var(--jade)}.point-values{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}.point-values div{padding:8px;background:#fff}.point-values span{display:block;font-size:10px;color:var(--ink-3)}.point-values b{font:11px ui-monospace,monospace}#point-explain{font-size:12px;color:var(--ink-2)}details{font-size:12px;color:var(--ink-2)}summary{cursor:pointer;color:var(--jade);font-weight:600}table{border-collapse:collapse;width:100%;font-size:11px}td,th{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px}.actions button{background:white;border:1px solid var(--line);padding:6px 10px;border-radius:5px;font:12px inherit;color:var(--jade);cursor:pointer}.actions span{font-size:10px;color:var(--ink-3)}@media(max-width:560px){body{padding:12px}.ctl{flex-wrap:wrap;gap:2px}.ctl label{min-width:100%}.readouts,.point-values{grid-template-columns:repeat(2,1fr)}.section-head{display:block}}
+
+/* 与老师 welllog-layer 样例一致：标题说明右侧、参数条上方。 */
+.demo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:14px 18px;border:1px solid var(--line);border-radius:8px;margin-bottom:16px;flex-wrap:wrap;background:#f6f5ee}.demo-head>div{flex:1;min-width:220px}.demo-head .lead{margin-bottom:0}.kicker{display:block;margin-bottom:6px;font-size:10px;letter-spacing:.08em;color:var(--jade)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 15px;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;border:1px solid var(--line);color:var(--ink);background:#fff;cursor:pointer;white-space:nowrap}.btn.primary{background:var(--jade);border-color:var(--jade);color:#fff;font-weight:600}.btn.primary:hover{background:#256554;border-color:#256554}.btn:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+
+/* v2.2: fill the portal's full content width; match the reference's header/body structure. */
+body{padding:0;background:var(--paper)}
+.panel{width:100%;max-width:none;min-width:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.demo-head{margin:0;padding:14px 18px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:#fcfbf8;gap:18px}
+.demo-head>div{min-width:220px;flex:1}.demo-head h1{font-size:17px;margin-bottom:6px}.demo-head .lead{max-width:86ch;font-size:11.8px;line-height:1.7}
+.demo-controls{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:11px 18px;border-bottom:1px solid var(--line);background:#f8f6f0}
+.demo-controls .ctl{flex:0 1 340px;margin:0;gap:12px;min-width:250px}.demo-controls .ctl label{min-width:135px;font-size:11.5px}.demo-controls .ctl input{min-width:90px;width:150px}
+.demo-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.9fr);align-items:start}
+.demo-charts{min-width:0;padding:16px 18px 18px;border-right:1px solid var(--line)}
+.demo-results{min-width:0;padding:16px 18px 18px}.demo-charts .legend{margin:0 0 9px;gap:8px 12px}
+.demo-charts svg{width:100%;height:auto;display:block}.demo-results .readouts{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.demo-results .ro{padding:10px 12px}.demo-results .ro b{font-size:14px}.demo-results .note{font-size:11.5px;line-height:1.8}
+.demo-results .point-values{grid-template-columns:repeat(2,minmax(0,1fr))}.demo-results .point-values div{padding:9px 10px}
+.demo-results .section-head{flex-wrap:wrap;gap:6px}.demo-results .section-head h2{font-size:12.5px}.demo-results .actions{gap:8px}.demo-results .actions span{flex-basis:100%}
+.demo-results .actions button{font-family:inherit;font-size:12px}.demo-results details{overflow-wrap:anywhere}.demo-results table{table-layout:fixed}button,input{touch-action:manipulation}
+@media(max-width:960px){.demo-body{grid-template-columns:minmax(0,1fr)}.demo-charts{border-right:0;border-bottom:1px solid var(--line)}.demo-results .readouts{grid-template-columns:repeat(4,minmax(0,1fr))}.demo-results .point-values{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){body{padding:0}.panel{border-radius:9px}.demo-head,.demo-controls,.demo-charts,.demo-results{padding:12px}.demo-controls{gap:10px}.demo-controls .ctl{flex:1 1 100%;min-width:0;flex-wrap:nowrap}.demo-controls .ctl label{min-width:130px}.demo-results .readouts,.demo-results .point-values{grid-template-columns:repeat(2,minmax(0,1fr))}.demo-head h1{font-size:16px}.demo-head .btn{margin-left:auto}}

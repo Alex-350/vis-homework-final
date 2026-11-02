@@ -1,0 +1,137 @@
+{
+  "id": "workover-duration-v22",
+  "sceneId": "wo5",
+  "title": "修井周期预测：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "修井时效受深度、复杂度、设备和等待等因素影响。排班需要知道工期范围，单点估计容易掩盖不确定性。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "工期回归 + 分割共形预测区间",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "点预测、区间及实测覆盖率",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "合成工况不等于现场作业，分布偏移会破坏覆盖假设，未进行工序级资源排程。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"修井周期预测专业概念\"><g fill=\"#354449\" font-size=\"14\"><rect x=\"25\" y=\"35\" width=\"180\" height=\"95\" fill=\"#e5efe8\"/><rect x=\"255\" y=\"35\" width=\"180\" height=\"95\" fill=\"#eee8da\"/><rect x=\"485\" y=\"35\" width=\"200\" height=\"95\" fill=\"#e4ebf2\"/><text x=\"45\" y=\"75\">训练：拟合工期</text><text x=\"275\" y=\"75\">校准：残差分位数</text><text x=\"505\" y=\"75\">测试：实际区间覆盖</text><text x=\"45\" y=\"110\">三组井次独立，区间宽不等于每次都准确</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"修井概念图\"><g font-size=\"17\" fill=\"#345647\"><path d=\"M30 110L200 40M30 140L200 70M30 80L200 10\" stroke=\"#43836b\" stroke-width=\"3\" fill=\"none\"/><text x=\"250\" y=\"65\">点预测 + 独立校准残差 → 区间</text><text x=\"250\" y=\"115\">观测偏移 → 覆盖率可能下降</text></g></svg><p>修井时效受深度、复杂度、设备和等待等因素影响。排班需要知道工期范围，单点估计容易掩盖不确定性。</p><p>概念示意，不是工具结构或施工图。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：独立井次的深度、复杂度代理与工期。方法：工期回归 + 分割共形预测区间。输出：点预测、区间及实测覆盖率。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>分离训练校准测试井次</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>拟合含交互项回归</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>用校准残差构造区间</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>测试覆盖率与均值误差</p><small>误差与来源</small></div></div><p>训练拟合 → 独立残差校准 → 预测区间 → 覆盖检验。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要 独立井次的深度、复杂度代理与工期；按独立井、作业批次或连续工序划分数据，保留复测和验证来源。不能随机混合相邻采样以虚高效果。</p><p>所有数据为教学合成：案例库 90 条；损伤分类训练 360 点；预警每工序正常样本 300 点；周期预测独立划分训练 300、校准 100、测试 100 井次。工具选型为虚拟规则库，不训练模型。训练种子 17，测试初始种子 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>合成工况不等于现场作业，分布偏移会破坏覆盖假设，未进行工序级资源排程。</p><p><a href=\"https://glossary.slb.com/en/terms/f/fishing_tool\">SLB：打捞工具概念</a>；<a href=\"https://glossary.slb.com/en/terms/o/overshot\">SLB：外抓取工具概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">线性模型原理</a>。合成公式与代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "修井周期预测：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 分离训练校准测试井次",
+          "role": "数据",
+          "do": "独立井次的深度、复杂度代理与工期按独立井和工序规范来源。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 拟合含交互项回归",
+          "role": "学习",
+          "do": "工期回归 + 分割共形预测区间；依据案例明确训练、校准或规则边界。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 用校准残差构造区间",
+          "role": "推理",
+          "do": "训练拟合 → 独立残差校准 → 预测区间 → 覆盖检验；实时滑块改变输入。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 测试覆盖率与均值误差",
+          "role": "验收",
+          "do": "与相同测试条件下的基线或证据对照，检查 合成工况不等于现场作业，分布偏移会破坏覆盖假设，未进行工序级资源排程。",
+          "effect": "基线比较或来源审核",
+          "trap": "合成工况不等于现场作业，分布偏移会破坏覆盖假设，未进行工序级资源排程。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>训练拟合 → 独立残差校准 → 预测区间 → 覆盖检验</p><p>案例检索保留来源编号；规则工具选型保留不兼容和未核实条件；损伤识别用准确率；风险预警用 F1、误报和漏报；周期预测用 MAE、区间宽度与独立测试覆盖率。覆盖率不等于每个个体的保证。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "合成工况不等于现场作业，分布偏移会破坏覆盖假设，未进行工序级资源排程。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

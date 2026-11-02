@@ -1,0 +1,137 @@
+{
+  "id": "drilling-mud-v22",
+  "sceneId": "d5",
+  "title": "钻井液性能智能调控：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "钻井液承担携岩、冷却润滑与压力控制等任务。塑性黏度是流变参数之一，与固相、流体基液和温度等因素有关；不能把塑性黏度直接等同于携岩能力。",
+      "judge": [
+        {
+          "label": "智能方法",
+          "value": "岭回归软测量 + 处理方向搜索",
+          "desc": "原生 JavaScript 实际计算"
+        },
+        {
+          "label": "数据来源",
+          "value": "教学合成",
+          "desc": "训练与测试独立随机种子"
+        },
+        {
+          "label": "评估",
+          "value": "塑性黏度 MAE / mPa·s",
+          "desc": "同一测试序列与基线比较"
+        },
+        {
+          "label": "边界",
+          "value": "演示",
+          "desc": "仅估算塑性黏度，不同时优化密度、动切力或滤失；建议不对应实际药剂种类和加量。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与业务问题",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 180\" role=\"img\" aria-label=\"钻井液性能智能调控概念示意\"><rect width=\"740\" height=\"180\" fill=\"#eef4e9\"/><g fill=\"#345648\" font-size=\"17\"><path d=\"M60 25V145H190V25M125 35V130\" stroke=\"#3f7d64\" stroke-width=\"6\" fill=\"none\"/><path d=\"M90 50V120M165 120V50\" stroke=\"#c38d42\" stroke-width=\"4\"/><text x=\"300\" y=\"55\">钻井液沿钻柱下行、环空返出</text><text x=\"300\" y=\"100\">温度与固相影响流变性质</text><text x=\"300\" y=\"145\">稀疏化验 + 连续工况 → 软测量</text></g></svg><p>概念示意，非工程结构图，不按比例绘制。</p><p>钻井液承担携岩、冷却润滑与压力控制等任务。塑性黏度是流变参数之一，与固相、流体基液和温度等因素有关；不能把塑性黏度直接等同于携岩能力。</p><p>实验室流变测试较稀疏，循环状态却持续变化，人工处理可能滞后。</p>"
+        },
+        {
+          "no": 2,
+          "en": "LEARNING",
+          "title": "智能化介入点",
+          "html": "<p>方法：岭回归软测量 + 处理方向搜索。输入：归一化循环压力代理、温度、含砂特征与塑性黏度标签。输出：实时黏度估计与无量纲增黏/减黏建议。</p><div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 多源时间对齐</b><p>高频工况 + 稀疏标签 → 监督样本</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 训练软测量模型</b><p>工况向量 → 估计 PV</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 搜索处理方向</b><p>PV 估计 + 目标 38 → 处理方向</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 观察与复核</b><p>黏度曲线 + 方向曲线 → 复核</p></div></div><p>回归案例从 400 条训练样本拟合系数，预警案例从 400 条正常样本学习均值与标准差；测试真值仅用于评价，不进入预测函数。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据条件与验证",
+          "html": "<p>现场需要：归一化循环压力代理、温度、含砂特征与塑性黏度标签；先从少量井建立概念验证，再按独立井、钻具或连续时间块留出验收，不能随机混合相邻采样点。</p><p>演示训练种子固定 17，正常基线种子 27，测试种子初始 91。第二滑块调节观测噪声或状态扰动；更换样本会更换测试种子，训练模型保持固定。</p><p>所用归一化输入在 0–1 范围内，演示的参数区间与数据规模不是现场推荐标准。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "适用边界与参考",
+          "html": "<p>仅估算塑性黏度，不同时优化密度、动切力或滤失；建议不对应实际药剂种类和加量。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-directional-drilling\">SLB：定向钻井概念</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-drilling-fluids\">SLB：钻井液概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性模型原理</a>。这些资料用于概念与方法参考；本项目合成公式与演示代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "钻井液性能智能调控的四步实验",
+      "lead": [
+        "每一步的输入输出见下图。进入案例演示，可调节参数并导出实际计算结果。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "400"
+        ],
+        [
+          "计算",
+          "浏览器"
+        ],
+        [
+          "验证",
+          "独立测试"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 · 多源时间对齐",
+          "role": "数据",
+          "do": "将循环压力、温度和含砂特征对齐到稀疏流变测试时刻。",
+          "effect": "高频工况 + 稀疏标签 → 监督样本",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "02 · 训练软测量模型",
+          "role": "学习",
+          "do": "拟合实时特征到塑性黏度的回归映射，按井或时段验证。",
+          "effect": "工况向量 → 估计 PV",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "03 · 搜索处理方向",
+          "role": "决策",
+          "do": "扫描归一化动作，平衡目标黏度偏差与调整幅度惩罚。",
+          "effect": "PV 估计 + 目标 38 → 处理方向",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "04 · 观察与复核",
+          "role": "验收",
+          "do": "查看估计误差与建议序列；实际处理仍需试验和工程师审核。",
+          "effect": "黏度曲线 + 方向曲线 → 复核",
+          "trap": "仅估算塑性黏度，不同时优化密度、动切力或滤失；建议不对应实际药剂种类和加量。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与验收口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 多源时间对齐</b><p>高频工况 + 稀疏标签 → 监督样本</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 训练软测量模型</b><p>工况向量 → 估计 PV</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 搜索处理方向</b><p>PV 估计 + 目标 38 → 处理方向</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 观察与复核</b><p>黏度曲线 + 方向曲线 → 复核</p></div></div><p>指标：塑性黏度 MAE / mPa·s。MAE = 平均绝对误差；F1 = 2TP/(2TP+FP+FN)。轨迹误差按横向位移比较；疲劳误差是归一化损伤，不是寿命误差。所有基线与学习模型使用同一测试序列。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "数据泄漏",
+          "why": "相邻采样混入训练和测试会虚高结果，现场需要按井或时间块隔离。"
+        },
+        {
+          "name": "工况迁移",
+          "why": "岩性、设备、钻井液配方或控制响应变化后必须重新验证。"
+        },
+        {
+          "name": "模型范围",
+          "why": "仅估算塑性黏度，不同时优化密度、动切力或滤失；建议不对应实际药剂种类和加量。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

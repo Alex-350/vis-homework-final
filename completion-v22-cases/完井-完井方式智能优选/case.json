@@ -1,0 +1,137 @@
+{
+  "id": "completion-select-v22",
+  "sceneId": "co1",
+  "title": "完井方式智能优选：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "完井方式决定井筒与储层的连通方式。裸眼、套管射孔、筛管和砾石充填在防砂、复杂程度和流动能力方面存在取舍，不能仅按单一产能指标选型。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "案例推理 + 防砂知识规则排序",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "四种方式排序及相似案例引用",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "是微型案例库与规则融合，不是完整知识图谱；评分无真实经济含义。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<figure style=\"margin:0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"完井专业概念\"><g font-size=\"17\" fill=\"#345647\"><text x=\"20\" y=\"45\">储层条件</text><text x=\"20\" y=\"100\">出砂 / 出水</text><text x=\"230\" y=\"45\">防砂知识规则</text><text x=\"230\" y=\"100\">历史案例 H001…H080</text><text x=\"520\" y=\"70\">四种方式排序</text><text x=\"520\" y=\"130\">证据编号可追溯</text></g><path d=\"M135 65H215M425 65H500\" stroke=\"#43836b\" stroke-width=\"4\"/></svg><figcaption>原理示意，不代表现场结构、产能或力学验算。</figcaption></figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"完井方式智能优选概念\"><rect width=\"760\" height=\"170\" fill=\"#eef4e9\"/><path d=\"M20 130L60 120L100 125L140 60L180 65L220 80L260 40\" fill=\"none\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"55\" font-size=\"18\" fill=\"#345648\">完井方式智能优选</text><text x=\"20\" y=\"155\" font-size=\"14\" fill=\"#345648\">地层条件 → 近邻案例检索 → 防砂规则 → 候选排序</text><text x=\"300\" y=\"100\" font-size=\"14\" fill=\"#345648\">储层 / 温压 / 生产状态 → 建模与决策 → 可复核候选</text></svg><p>概念示意，非现场曲线。具体坐标和单位见案例演示。</p><p>完井方式决定井筒与储层的连通方式。裸眼、套管射孔、筛管和砾石充填在防砂、复杂程度和流动能力方面存在取舍，不能仅按单一产能指标选型。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：出砂倾向与出水代理、带来源编号的历史案例。方法：案例推理 + 防砂知识规则排序。输出：四种方式排序及相似案例引用。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>规范条件与案例</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>每方案检索三个近邻</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>融合规则评分</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>引用证据并人工复核</p><small>误差与来源</small></div></div><p>地层条件 → 近邻案例检索 → 防砂规则 → 候选排序。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的出砂倾向与出水代理、带来源编号的历史案例，并由施工结果、胶结解释或独立验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；代理从独立合成样本拟合；优选采用案例推理与规则；滑套采用表格强化学习。所有样本均为教学合成。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>是微型案例库与规则融合，不是完整知识图谱；评分无真实经济含义。</p><p><a href=\"https://glossary.slb.com/en/terms/c/completion_bond_log\">SLB：防砂完井概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归与逻辑回归原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "完井方式智能优选：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 规范条件与案例",
+          "role": "数据",
+          "do": "出砂倾向与出水代理、带来源编号的历史案例按深度对齐，按独立井留出测试。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 每方案检索三个近邻",
+          "role": "学习",
+          "do": "按各例方法建立案例检索、回归代理或 Q 表；不使用测试标签拟合。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 融合规则评分",
+          "role": "推理",
+          "do": "地层条件 → 近邻案例检索 → 防砂规则 → 候选排序；第一滑块调节当前实验参数。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 引用证据并人工复核",
+          "role": "验收",
+          "do": "比较真值与基线，导出 CSV 并复核误差。",
+          "effect": "基线比较或来源审核",
+          "trap": "是微型案例库与规则融合，不是完整知识图谱；评分无真实经济含义。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>规范条件与案例</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>每方案检索三个近邻</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>融合规则评分</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>引用证据并人工复核</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><p>排序需检查相似案例编号与知识规则；本例没有现场方案真值，不报告选型准确率。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "是微型案例库与规则融合，不是完整知识图谱；评分无真实经济含义。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

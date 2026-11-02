@@ -1,0 +1,137 @@
+{
+  "id": "completion-stress-v22",
+  "sceneId": "co3",
+  "title": "完井管柱受力智能分析：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "生产管柱的温度与压力变化可能导致伸缩和载荷改变；受封隔器等约束时，位移与力需要共同考虑。简单温压代理不能替代完整力学校核。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "含交互项岭回归载荷代理",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "载荷曲线、残差与代理安全系数",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "不实现真实轴力、屈曲、接头和疲劳分析，强度及目标系数均为教学假设。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<figure style=\"margin:0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"完井专业概念\"><path d=\"M90 20V150M155 20V150\" stroke=\"#77978a\" stroke-width=\"14\"/><path d=\"M70 35H175M70 140H175\" stroke=\"#c59048\" stroke-width=\"5\"/><g font-size=\"17\" fill=\"#345647\"><text x=\"230\" y=\"45\">温差 → 热伸缩；压力 → 载荷变化</text><text x=\"230\" y=\"90\">端部约束使位移与力相互关联</text><text x=\"230\" y=\"135\">代理预测仅用于理解工况敏感性</text></g></svg><figcaption>原理示意，不代表现场结构、产能或力学验算。</figcaption></figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"完井管柱受力智能分析概念\"><rect width=\"760\" height=\"170\" fill=\"#eef4e9\"/><path d=\"M20 130L60 120L100 125L140 60L180 65L220 80L260 40\" fill=\"none\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"55\" font-size=\"18\" fill=\"#345648\">完井管柱受力智能分析</text><text x=\"20\" y=\"155\" font-size=\"14\" fill=\"#345648\">温压工况 → 交互特征 → 回归代理 → 风险工况</text><text x=\"300\" y=\"100\" font-size=\"14\" fill=\"#345648\">储层 / 温压 / 生产状态 → 建模与决策 → 可复核候选</text></svg><p>概念示意，非现场曲线。具体坐标和单位见案例演示。</p><p>生产管柱的温度与压力变化可能导致伸缩和载荷改变；受封隔器等约束时，位移与力需要共同考虑。简单温压代理不能替代完整力学校核。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：合成温差和压力代理、载荷标签。方法：含交互项岭回归载荷代理。输出：载荷曲线、残差与代理安全系数。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>生成独立温压工况</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>训练交互项回归</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>扫描测试工况</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>比较固定载荷基线</p><small>误差与来源</small></div></div><p>温压工况 → 交互特征 → 回归代理 → 风险工况。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的合成温差和压力代理、载荷标签，并由施工结果、胶结解释或独立验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；代理从独立合成样本拟合；优选采用案例推理与规则；滑套采用表格强化学习。所有样本均为教学合成。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>不实现真实轴力、屈曲、接头和疲劳分析，强度及目标系数均为教学假设。</p><p><a href=\"https://glossary.slb.com/en/terms/c/completion_bond_log\">SLB：防砂完井概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归与逻辑回归原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "完井管柱受力智能分析：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 生成独立温压工况",
+          "role": "数据",
+          "do": "合成温差和压力代理、载荷标签按深度对齐，按独立井留出测试。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 训练交互项回归",
+          "role": "学习",
+          "do": "按各例方法建立案例检索、回归代理或 Q 表；不使用测试标签拟合。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 扫描测试工况",
+          "role": "推理",
+          "do": "温压工况 → 交互特征 → 回归代理 → 风险工况；第一滑块调节当前实验参数。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 比较固定载荷基线",
+          "role": "验收",
+          "do": "比较真值与基线，导出 CSV 并复核误差。",
+          "effect": "基线比较或来源审核",
+          "trap": "不实现真实轴力、屈曲、接头和疲劳分析，强度及目标系数均为教学假设。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>生成独立温压工况</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>训练交互项回归</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>扫描测试工况</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>比较固定载荷基线</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><p>MAE 以合成载荷真值验收；代理安全系数 = 教学强度 300 MPa / 预测载荷。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "不实现真实轴力、屈曲、接头和疲劳分析，强度及目标系数均为教学假设。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

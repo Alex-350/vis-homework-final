@@ -1,0 +1,137 @@
+{
+  "id": "drilling-fatigue-v22",
+  "sceneId": "d4",
+  "title": "钻具失效预测：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "钻具承受交变弯曲和扭转载荷，反复循环可能累积疲劳损伤。累计服役时间相同的钻具，在高振动和低振动下消耗的寿命并不相同。",
+      "judge": [
+        {
+          "label": "智能方法",
+          "value": "损伤率回归 + 累积损伤外推",
+          "desc": "原生 JavaScript 实际计算"
+        },
+        {
+          "label": "数据来源",
+          "value": "教学合成",
+          "desc": "训练与测试独立随机种子"
+        },
+        {
+          "label": "评估",
+          "value": "损伤 MAE 与 RUL / h",
+          "desc": "同一测试序列与基线比较"
+        },
+        {
+          "label": "边界",
+          "value": "演示",
+          "desc": "损伤阈值与生成式均为教学假设，不含真实材料 S-N 曲线、裂纹扩展与载荷谱。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与业务问题",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 180\" role=\"img\" aria-label=\"钻具失效预测概念示意\"><rect width=\"740\" height=\"180\" fill=\"#eef4e9\"/><g fill=\"#345648\" font-size=\"17\"><path d=\"M25 145L80 135L135 110L190 85L245 40\" stroke=\"#3f7d64\" stroke-width=\"4\" fill=\"none\"/><path d=\"M20 35H300\" stroke=\"#b45d4d\" stroke-dasharray=\"6 4\"/><text x=\"340\" y=\"55\">交变载荷 → 损伤累积</text><text x=\"340\" y=\"100\">D 接近阈值 → 剩余裕度减小</text><text x=\"340\" y=\"145\">未来工况假设决定寿命外推</text></g></svg><p>概念示意，非工程结构图，不按比例绘制。</p><p>钻具承受交变弯曲和扭转载荷，反复循环可能累积疲劳损伤。累计服役时间相同的钻具，在高振动和低振动下消耗的寿命并不相同。</p><p>只按固定小时数估计寿命，不能反映不同载荷强度的差异。</p>"
+        },
+        {
+          "no": 2,
+          "en": "LEARNING",
+          "title": "智能化介入点",
+          "html": "<p>方法：损伤率回归 + 累积损伤外推。输入：振动、扭矩代理特征与单位时间损伤增量标签。输出：累积损伤与当前损伤率下的剩余寿命 RUL。</p><div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 整理载荷与检查记录</b><p>服役历史 + 检查 → 损伤率样本</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 学习单位时间损伤</b><p>特征向量 → 预测损伤率</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 累计与外推</b><p>损伤率 → D(t) → max(0,(1−D)/损伤率)</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 对照与复核</b><p>累积曲线 + 阈值线 → 风险解释</p></div></div><p>回归案例从 400 条训练样本拟合系数，预警案例从 400 条正常样本学习均值与标准差；测试真值仅用于评价，不进入预测函数。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据条件与验证",
+          "html": "<p>现场需要：振动、扭矩代理特征与单位时间损伤增量标签；先从少量井建立概念验证，再按独立井、钻具或连续时间块留出验收，不能随机混合相邻采样点。</p><p>演示训练种子固定 17，正常基线种子 27，测试种子初始 91。第二滑块调节观测噪声或状态扰动；更换样本会更换测试种子，训练模型保持固定。</p><p>所用归一化输入在 0–1 范围内，演示的参数区间与数据规模不是现场推荐标准。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "适用边界与参考",
+          "html": "<p>损伤阈值与生成式均为教学假设，不含真实材料 S-N 曲线、裂纹扩展与载荷谱。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-directional-drilling\">SLB：定向钻井概念</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-drilling-fluids\">SLB：钻井液概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性模型原理</a>。这些资料用于概念与方法参考；本项目合成公式与演示代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "钻具失效预测的四步实验",
+      "lead": [
+        "每一步的输入输出见下图。进入案例演示，可调节参数并导出实际计算结果。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "400"
+        ],
+        [
+          "计算",
+          "浏览器"
+        ],
+        [
+          "验证",
+          "独立测试"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 · 整理载荷与检查记录",
+          "role": "数据",
+          "do": "按钻具编号对齐服役工况与探伤记录，按钻具留出验证。",
+          "effect": "服役历史 + 检查 → 损伤率样本",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "02 · 学习单位时间损伤",
+          "role": "学习",
+          "do": "用振动、扭矩与振动平方拟合小时损伤增量。",
+          "effect": "特征向量 → 预测损伤率",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "03 · 累计与外推",
+          "role": "决策",
+          "do": "逐时累加损伤，再用剩余损伤裕度除以当前损伤率估计 RUL。",
+          "effect": "损伤率 → D(t) → max(0,(1−D)/损伤率)",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "04 · 对照与复核",
+          "role": "验收",
+          "do": "比较固定损伤率基线，观察阈值接近时的寿命变化并识别假设。",
+          "effect": "累积曲线 + 阈值线 → 风险解释",
+          "trap": "损伤阈值与生成式均为教学假设，不含真实材料 S-N 曲线、裂纹扩展与载荷谱。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与验收口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 整理载荷与检查记录</b><p>服役历史 + 检查 → 损伤率样本</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 学习单位时间损伤</b><p>特征向量 → 预测损伤率</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 累计与外推</b><p>损伤率 → D(t) → max(0,(1−D)/损伤率)</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 对照与复核</b><p>累积曲线 + 阈值线 → 风险解释</p></div></div><p>指标：损伤 MAE 与 RUL / h。MAE = 平均绝对误差；F1 = 2TP/(2TP+FP+FN)。轨迹误差按横向位移比较；疲劳误差是归一化损伤，不是寿命误差。所有基线与学习模型使用同一测试序列。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "数据泄漏",
+          "why": "相邻采样混入训练和测试会虚高结果，现场需要按井或时间块隔离。"
+        },
+        {
+          "name": "工况迁移",
+          "why": "岩性、设备、钻井液配方或控制响应变化后必须重新验证。"
+        },
+        {
+          "name": "模型范围",
+          "why": "损伤阈值与生成式均为教学假设，不含真实材料 S-N 曲线、裂纹扩展与载荷谱。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "id": "drilling-trajectory-v22",
+  "sceneId": "d3",
+  "title": "井眼轨迹智能控制：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "定向钻井通过调整工具响应，使井眼接近目标轨迹。实际轨迹涉及井斜、方位、测深与狗腿度；本例把它简化为沿进尺推进的横向位移，解释预测控制的基本思想。",
+      "judge": [
+        {
+          "label": "智能方法",
+          "value": "线性系统辨识 + 一步预测控制",
+          "desc": "原生 JavaScript 实际计算"
+        },
+        {
+          "label": "数据来源",
+          "value": "教学合成",
+          "desc": "训练与测试独立随机种子"
+        },
+        {
+          "label": "评估",
+          "value": "横向位移 MAE / m",
+          "desc": "同一测试序列与基线比较"
+        },
+        {
+          "label": "边界",
+          "value": "演示",
+          "desc": "只模拟一维横向状态，不是三维轨迹控制；无真实工具面或狗腿约束，不能用于现场。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与业务问题",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 180\" role=\"img\" aria-label=\"井眼轨迹智能控制概念示意\"><rect width=\"740\" height=\"180\" fill=\"#eef4e9\"/><g fill=\"#345648\" font-size=\"17\"><path d=\"M30 25Q250 25 270 150\" fill=\"none\" stroke=\"#c38d42\" stroke-width=\"5\"/><path d=\"M30 32Q220 40 250 150\" fill=\"none\" stroke=\"#3f7d64\" stroke-width=\"4\"/><text x=\"340\" y=\"55\">橙色：设计轨迹（示意）</text><text x=\"340\" y=\"100\">绿色：受扰动的实钻轨迹</text><text x=\"340\" y=\"145\">测量 → 预测 → 纠偏 → 再测量</text></g></svg><p>概念示意，非工程结构图，不按比例绘制。</p><p>定向钻井通过调整工具响应，使井眼接近目标轨迹。实际轨迹涉及井斜、方位、测深与狗腿度；本例把它简化为沿进尺推进的横向位移，解释预测控制的基本思想。</p><p>手动纠偏容易滞后；控制量过大又会造成频繁转向和轨迹波动。</p>"
+        },
+        {
+          "no": 2,
+          "en": "LEARNING",
+          "title": "智能化介入点",
+          "html": "<p>方法：线性系统辨识 + 一步预测控制。输入：归一化纠偏动作与相邻测点位移增量。输出：每一步控制建议、轨迹偏差与动作序列。</p><div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 构造动作响应样本</b><p>动作 u → 位移增量 Δx</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 辨识响应增益</b><p>成对数据 → 增益 g 与偏置 b</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 逐步预测并决策</b><p>当前状态 + 目标 → 候选预测 → 最优动作</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 模拟执行与再规划</b><p>执行 → 新状态 → 下一次预测</p></div></div><p>回归案例从 400 条训练样本拟合系数，预警案例从 400 条正常样本学习均值与标准差；测试真值仅用于评价，不进入预测函数。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据条件与验证",
+          "html": "<p>现场需要：归一化纠偏动作与相邻测点位移增量；先从少量井建立概念验证，再按独立井、钻具或连续时间块留出验收，不能随机混合相邻采样点。</p><p>演示训练种子固定 17，正常基线种子 27，测试种子初始 91。第二滑块调节观测噪声或状态扰动；更换样本会更换测试种子，训练模型保持固定。</p><p>所用归一化输入在 0–1 范围内，演示的参数区间与数据规模不是现场推荐标准。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "适用边界与参考",
+          "html": "<p>只模拟一维横向状态，不是三维轨迹控制；无真实工具面或狗腿约束，不能用于现场。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-directional-drilling\">SLB：定向钻井概念</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-drilling-fluids\">SLB：钻井液概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性模型原理</a>。这些资料用于概念与方法参考；本项目合成公式与演示代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "井眼轨迹智能控制的四步实验",
+      "lead": [
+        "每一步的输入输出见下图。进入案例演示，可调节参数并导出实际计算结果。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "400"
+        ],
+        [
+          "计算",
+          "浏览器"
+        ],
+        [
+          "验证",
+          "独立测试"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 · 构造动作响应样本",
+          "role": "数据",
+          "do": "将历史纠偏动作与下一测点横向位移增量配对。",
+          "effect": "动作 u → 位移增量 Δx",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "02 · 辨识响应增益",
+          "role": "学习",
+          "do": "拟合 Δx = b + g·u，得到工具与地层的简化响应。",
+          "effect": "成对数据 → 增益 g 与偏置 b",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "03 · 逐步预测并决策",
+          "role": "决策",
+          "do": "搜索 [-1,1] 的动作，使下一步偏差平方与动作惩罚之和最小。",
+          "effect": "当前状态 + 目标 → 候选预测 → 最优动作",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "04 · 模拟执行与再规划",
+          "role": "验收",
+          "do": "在独立扰动下执行一步，更新状态后重新计算，比较不纠偏基线。",
+          "effect": "执行 → 新状态 → 下一次预测",
+          "trap": "只模拟一维横向状态，不是三维轨迹控制；无真实工具面或狗腿约束，不能用于现场。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与验收口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 构造动作响应样本</b><p>动作 u → 位移增量 Δx</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 辨识响应增益</b><p>成对数据 → 增益 g 与偏置 b</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 逐步预测并决策</b><p>当前状态 + 目标 → 候选预测 → 最优动作</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 模拟执行与再规划</b><p>执行 → 新状态 → 下一次预测</p></div></div><p>指标：横向位移 MAE / m。MAE = 平均绝对误差；F1 = 2TP/(2TP+FP+FN)。轨迹误差按横向位移比较；疲劳误差是归一化损伤，不是寿命误差。所有基线与学习模型使用同一测试序列。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "数据泄漏",
+          "why": "相邻采样混入训练和测试会虚高结果，现场需要按井或时间块隔离。"
+        },
+        {
+          "name": "工况迁移",
+          "why": "岩性、设备、钻井液配方或控制响应变化后必须重新验证。"
+        },
+        {
+          "name": "模型范围",
+          "why": "只模拟一维横向状态，不是三维轨迹控制；无真实工具面或狗腿约束，不能用于现场。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

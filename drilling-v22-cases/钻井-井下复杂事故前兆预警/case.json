@@ -1,0 +1,137 @@
+{
+  "id": "drilling-warning-v22",
+  "sceneId": "d2",
+  "title": "井下复杂事故前兆预警：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "扭矩、立管压力和返出流量共同反映井下状态。例如返出流量偏离正常循环规律，可能提示需要复核的工况变化；单一通道异常不能直接判定事故类型。",
+      "judge": [
+        {
+          "label": "智能方法",
+          "value": "正常工况统计学习 + 多变量异常检测",
+          "desc": "原生 JavaScript 实际计算"
+        },
+        {
+          "label": "数据来源",
+          "value": "教学合成",
+          "desc": "训练与测试独立随机种子"
+        },
+        {
+          "label": "评估",
+          "value": "F1、误报数、漏报数",
+          "desc": "同一测试序列与基线比较"
+        },
+        {
+          "label": "边界",
+          "value": "演示",
+          "desc": "只检测偏离，不识别卡钻、井漏或气侵的具体类型；分数不是事故概率。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与业务问题",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 180\" role=\"img\" aria-label=\"井下复杂事故前兆预警概念示意\"><rect width=\"740\" height=\"180\" fill=\"#eef4e9\"/><g fill=\"#345648\" font-size=\"17\"><path d=\"M20 50H190L250 28H310M20 90H190L250 120H310M20 140H190L250 110H310\" stroke=\"#3f7d64\" stroke-width=\"3\" fill=\"none\"/><text x=\"350\" y=\"50\">扭矩 ↑</text><text x=\"350\" y=\"95\">返出流量 ↓</text><text x=\"350\" y=\"140\">多通道偏离 → 待复核异常</text></g></svg><p>概念示意，非工程结构图，不按比例绘制。</p><p>扭矩、立管压力和返出流量共同反映井下状态。例如返出流量偏离正常循环规律，可能提示需要复核的工况变化；单一通道异常不能直接判定事故类型。</p><p>固定单通道阈值容易漏掉多通道轻微但一致的偏移，也会受到工况切换干扰。</p>"
+        },
+        {
+          "no": 2,
+          "en": "LEARNING",
+          "title": "智能化介入点",
+          "html": "<p>方法：正常工况统计学习 + 多变量异常检测。输入：正常段多通道特征；验收时独立提供前兆区间。输出：异常分数与超过阈值的报警时刻。</p><div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 划定正常工况</b><p>工况划分 → 正常参考集</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 学习正常分布</b><p>各通道 → z 分数</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 融合与报警</b><p>多通道偏离 → 综合分数 → 报警</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 事件级复核</b><p>报警时序 + 事件标签 → 验收</p></div></div><p>回归案例从 400 条训练样本拟合系数，预警案例从 400 条正常样本学习均值与标准差；测试真值仅用于评价，不进入预测函数。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据条件与验证",
+          "html": "<p>现场需要：正常段多通道特征；验收时独立提供前兆区间；先从少量井建立概念验证，再按独立井、钻具或连续时间块留出验收，不能随机混合相邻采样点。</p><p>演示训练种子固定 17，正常基线种子 27，测试种子初始 91。第二滑块调节观测噪声或状态扰动；更换样本会更换测试种子，训练模型保持固定。</p><p>所用归一化输入在 0–1 范围内，演示的参数区间与数据规模不是现场推荐标准。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "适用边界与参考",
+          "html": "<p>只检测偏离，不识别卡钻、井漏或气侵的具体类型；分数不是事故概率。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-directional-drilling\">SLB：定向钻井概念</a>；<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-drilling-fluids\">SLB：钻井液概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性模型原理</a>。这些资料用于概念与方法参考；本项目合成公式与演示代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "井下复杂事故前兆预警的四步实验",
+      "lead": [
+        "每一步的输入输出见下图。进入案例演示，可调节参数并导出实际计算结果。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "400"
+        ],
+        [
+          "计算",
+          "浏览器"
+        ],
+        [
+          "验证",
+          "独立测试"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 · 划定正常工况",
+          "role": "数据",
+          "do": "先区分钻进、接单根和起下钻，只用同类正常样本学习。",
+          "effect": "工况划分 → 正常参考集",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "02 · 学习正常分布",
+          "role": "学习",
+          "do": "计算各通道的均值和标准差，将量纲不同的信号标准化。",
+          "effect": "各通道 → z 分数",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "03 · 融合与报警",
+          "role": "决策",
+          "do": "计算三个标准化偏离平方均值的平方根，超过可调阈值报警。",
+          "effect": "多通道偏离 → 综合分数 → 报警",
+          "trap": "真实资料需按井或时间隔离，检查单位、工况与分布漂移。"
+        },
+        {
+          "name": "04 · 逐时刻复核",
+          "role": "验收",
+          "do": "对照合成前兆窗口，逐时刻统计误报、漏报和 F1。本例未计算事件级提前量，不将采样点 F1 当作事故级检出率。",
+          "effect": "报警时序 + 事件标签 → 验收",
+          "trap": "只检测偏离，不识别卡钻、井漏或气侵的具体类型；分数不是事故概率。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与验收口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\"><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>01 划定正常工况</b><p>工况划分 → 正常参考集</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>02 学习正常分布</b><p>各通道 → z 分数</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>03 融合与报警</b><p>多通道偏离 → 综合分数 → 报警</p></div><div style=\"flex:1;min-width:140px;background:#e8f1e7;padding:12px;border-radius:9px\"><b>04 事件级复核</b><p>报警时序 + 事件标签 → 验收</p></div></div><p>指标：F1、误报数、漏报数。MAE = 平均绝对误差；F1 = 2TP/(2TP+FP+FN)。轨迹误差按横向位移比较；疲劳误差是归一化损伤，不是寿命误差。所有基线与学习模型使用同一测试序列。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "数据泄漏",
+          "why": "相邻采样混入训练和测试会虚高结果，现场需要按井或时间块隔离。"
+        },
+        {
+          "name": "工况迁移",
+          "why": "岩性、设备、钻井液配方或控制响应变化后必须重新验证。"
+        },
+        {
+          "name": "模型范围",
+          "why": "只检测偏离，不识别卡钻、井漏或气侵的具体类型；分数不是事故概率。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "id": "eor-chem-v22",
+  "sceneId": "e3",
+  "title": "化学驱配方智能筛选：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "聚合物可改变水相流动特征，表面活性剂可影响界面行为；性能依赖盐度、温度与岩石流体作用。实验筛选需要在性能和成本之间取舍。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "含交互项回归代理 + 筛选",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "预算内配方候选和预测性能",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "无实际化学剂种类或浓度，不计算真实界面张力，也未实现主动学习。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"化学驱配方智能筛选专业概念\"><g fill=\"#354449\" font-size=\"14\"><rect x=\"20\" y=\"25\" width=\"290\" height=\"110\" rx=\"8\" fill=\"#e5efe8\"/><text x=\"40\" y=\"65\">聚合物代理：流动特征</text><text x=\"40\" y=\"105\">表活剂代理：界面行为</text><text x=\"350\" y=\"60\">盐度/温度改变实验响应</text><text x=\"350\" y=\"105\">预算内候选仍需独立实验验证</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"增采概念图\"><g font-size=\"17\" fill=\"#345647\"><rect x=\"20\" y=\"30\" width=\"170\" height=\"100\" fill=\"#e2eddb\"/><text x=\"35\" y=\"65\">岩石 / 流体 / 环境</text><text x=\"35\" y=\"110\">实验与监测</text><path d=\"M205 80H270\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"65\">学习响应 → 约束或误差验证</text><text x=\"300\" y=\"115\">实验尺度与现场尺度需再次标定</text></g></svg><p>聚合物可改变水相流动特征，表面活性剂可影响界面行为；性能依赖盐度、温度与岩石流体作用。实验筛选需要在性能和成本之间取舍。</p><p>概念示意，不是实际井场、裂缝或实验配方。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：聚合物、表活剂及盐度代理。方法：含交互项回归代理 + 筛选。输出：预算内配方候选和预测性能。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>统一实验条件</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习多因素响应</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>枚举预算内配方</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>输出候选与验证边界</p><small>误差与来源</small></div></div><p>独立实验样本 → 响应学习 → 盐度条件 → 预算筛选。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要 聚合物、表活剂及盐度代理，并与独立试验、监测或现场验证配对；按独立井、实验批次、施工段或周期组划分验证，避免数据泄漏。</p><p>演示全部为合成数据：响应代理各从 500 个独立样本学习；事件云例不训练监督模型，直接进行几何统计。训练种子 17、测试种子初始 91。换井会改变已知教学条件或独立测试资料，固定回归模型不重新训练。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>无实际化学剂种类或浓度，不计算真实界面张力，也未实现主动学习。</p><p><a href=\"https://www.slb.com/products-and-services/innovating-in-oil-and-gas/reservoir-characterization/rock-and-fluid-analysis/core-analysis/eor-labs\">SLB：增采实验与岩石流体作用</a>；<a href=\"https://www.slb.com/products-and-services/delivering-digital-at-scale/software/eclipse-industry-reference-reservoir-simulator/eclipse/eclipse-eor\">SLB：聚合物与化学驱机理</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归方法原理</a>。公式与演示为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "化学驱配方智能筛选：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 统一实验条件",
+          "role": "数据",
+          "do": "聚合物、表活剂及盐度代理按来源、坐标、单位与实验条件规范。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习多因素响应",
+          "role": "学习",
+          "do": "含交互项回归代理 + 筛选，不使用测试真值进行预测。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 枚举预算内配方",
+          "role": "推理",
+          "do": "独立实验样本 → 响应学习 → 盐度条件 → 预算筛选；滑块改变当前实验条件。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 输出候选与验证边界",
+          "role": "验收",
+          "do": "核对约束、同预算基线或独立真值，重点说明 无实际化学剂种类或浓度，不计算真实界面张力，也未实现主动学习。",
+          "effect": "基线比较或来源审核",
+          "trap": "无实际化学剂种类或浓度，不计算真实界面张力，也未实现主动学习。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>独立实验样本 → 响应学习 → 盐度条件 → 预算筛选</p><p>代理以独立真值或留出样本验收；几何结果需明确分布假设；配方和压裂搜索检查预算与压力可行性；吞吐方案按同一总量比较累计目标；活性以 MAE 比较固定基线。教学目标均不是现场精度承诺。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "无实际化学剂种类或浓度，不计算真实界面张力，也未实现主动学习。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

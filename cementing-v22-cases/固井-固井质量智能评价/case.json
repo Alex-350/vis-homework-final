@@ -1,0 +1,137 @@
+{
+  "id": "cementing-quality-v22",
+  "sceneId": "c1",
+  "title": "固井质量智能评价：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "固井后，水泥环位于套管与地层之间，为层间封隔提供基础。声波胶结测井通过套管波衰减等响应辅助评价胶结，不能仅凭单一幅度证明封隔可靠。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "多特征监督类中心分类",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "好、中、差三类胶结候选",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "使用合成 CBL 和纹理代理，未实现真实 VDL 图像识别；微环隙和快速地层可能干扰解释。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<figure style=\"margin:0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 190\" role=\"img\" aria-label=\"固井概念示意\"><circle cx=\"120\" cy=\"95\" r=\"78\" fill=\"#d0bc99\"/><circle cx=\"120\" cy=\"95\" r=\"61\" fill=\"#dfead7\"/><circle cx=\"120\" cy=\"95\" r=\"40\" fill=\"#77978a\"/><circle cx=\"120\" cy=\"95\" r=\"32\" fill=\"#f9faf3\"/><g font-size=\"16\" fill=\"#345647\"><text x=\"235\" y=\"50\">外圈：地层；浅绿：水泥环；内圈：套管</text><text x=\"235\" y=\"95\">声波响应辅助判断套管外侧胶结</text><text x=\"235\" y=\"140\">弱套管波通常提示较强衰减，但需综合解释</text></g></svg><figcaption>仅作概念示意，非工程比例或现场压力剖面。</figcaption></figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"固井质量智能评价概念\"><rect width=\"760\" height=\"170\" fill=\"#eef4e9\"/><path d=\"M20 130L60 120L100 125L140 60L180 65L220 80L260 40\" fill=\"none\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"55\" font-size=\"18\" fill=\"#345648\">固井质量智能评价</text><text x=\"20\" y=\"155\" font-size=\"14\" fill=\"#345648\">声源 → 套管波与地层波 → 多特征分类 → 综合复核</text><text x=\"300\" y=\"100\" font-size=\"14\" fill=\"#345648\">声波 / 施工 / 几何 → 建模与优化 → 可复核候选</text></svg><p>概念示意，非现场曲线。具体坐标和单位见案例演示。</p><p>固井后，水泥环位于套管与地层之间，为层间封隔提供基础。声波胶结测井通过套管波衰减等响应辅助评价胶结，不能仅凭单一幅度证明封隔可靠。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：CBL 幅度与地层波纹理代理。方法：多特征监督类中心分类。输出：好、中、差三类胶结候选。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>对齐 CBL 与施工记录</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习三类响应中心</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>独立井段分类</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>与幅度阈值基线比较</p><small>误差与来源</small></div></div><p>声源 → 套管波与地层波 → 多特征分类 → 综合复核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的CBL 幅度与地层波纹理代理，并由施工结果、胶结解释或独立验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；分类与回归从独立合成训练样本学习；居中度例使用组合优化，不训练模型。规模仅作原理说明。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>使用合成 CBL 和纹理代理，未实现真实 VDL 图像识别；微环隙和快速地层可能干扰解释。</p><p><a href=\"https://glossary.slb.com/en/terms/c/cement_bond_log\">SLB：固井胶结测井概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归与逻辑回归原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "固井质量智能评价：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 对齐 CBL 与施工记录",
+          "role": "数据",
+          "do": "CBL 幅度与地层波纹理代理按深度对齐，按独立井留出测试。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习三类响应中心",
+          "role": "学习",
+          "do": "回归与分类从独立样本学习；居中度例建立简化几何响应与优化目标。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 独立井段分类",
+          "role": "推理",
+          "do": "声源 → 套管波与地层波 → 多特征分类 → 综合复核；第一滑块调节当前实验参数。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 与幅度阈值基线比较",
+          "role": "验收",
+          "do": "比较真值与基线，导出 CSV 并复核误差。",
+          "effect": "基线比较或来源审核",
+          "trap": "使用合成 CBL 和纹理代理，未实现真实 VDL 图像识别；微环隙和快速地层可能干扰解释。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>对齐 CBL 与施工记录</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习三类响应中心</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>独立井段分类</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>与幅度阈值基线比较</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "使用合成 CBL 和纹理代理，未实现真实 VDL 图像识别；微环隙和快速地层可能干扰解释。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

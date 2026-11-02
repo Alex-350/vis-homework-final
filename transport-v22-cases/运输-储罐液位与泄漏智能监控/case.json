@@ -1,0 +1,137 @@
+{
+  "id": "transport-tank-v22",
+  "sceneId": "t5",
+  "title": "储罐液位与泄漏智能监控：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "储罐液位变化应与净入流和罐体几何相符。多传感器可以帮助核对读数，但液位异常也可能由计量和传感故障引起。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "物料平衡 + 学习正常残差",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "五分钟残差报警与读数对照",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "视觉仅为数值代理，不实现视频识别；异常残差不等于已确认泄漏。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"储罐液位与泄漏智能监控专业概念\"><g fill=\"#354449\" font-size=\"14\"><path d=\"M35 25V140H200V25\" fill=\"#e5efe8\" stroke=\"#2f7d6b\" stroke-width=\"4\"/><path d=\"M38 85H198\" stroke=\"#41699b\" stroke-width=\"5\"/><text x=\"280\" y=\"55\">Δ液位 × 面积 ↔ 净入流 × 时间</text><text x=\"280\" y=\"100\">五分钟窗口降低噪声，也产生延迟</text><text x=\"280\" y=\"140\">多读数对照不等于已确认流失原因</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"运输概念示意\"><g font-size=\"17\" fill=\"#345647\"><path d=\"M40 25V140H180V25Z\" fill=\"#e3efdc\" stroke=\"#43836b\" stroke-width=\"4\"/><path d=\"M42 85H178\" stroke=\"#648eae\" stroke-width=\"5\"/><text x=\"230\" y=\"60\">净入流 → 库存变化 → 液位变化</text><text x=\"230\" y=\"110\">雷达 / 视觉代理对照，不替代实际图像检测</text></g></svg><p>储罐液位变化应与净入流和罐体几何相符。多传感器可以帮助核对读数，但液位异常也可能由计量和传感故障引起。</p><p>概念示意，非实际管网、仪表或储罐工程图。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：雷达液位、视觉读数代理与已知净入流。方法：物料平衡 + 学习正常残差。输出：五分钟残差报警与读数对照。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>对齐液位和流量时间</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习正常残差尺度</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>按五分钟物料平衡检测</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>显示双读数与低位基线</p><small>误差与来源</small></div></div><p>净入流与几何 → 液位预测 → 窗口残差 → 多源复核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需 雷达液位、视觉读数代理与已知净入流，保留校准、检测或运行来源并统一时钟、单位和参考条件；按独立管段、设备、标定批次或时间块留出验证。</p><p>全部为教学合成数据，代理和正常基线用 400 个独立样本学习；测试种子初始 91，训练种子 17。真实测试标签不进入预测。换井切换独立测量或已知分泵阻力修正，固定回归系数不重新训练。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>视觉仅为数值代理，不实现视频识别；异常残差不等于已确认泄漏。</p><p><a href=\"https://www.slb.com/products-and-services/innovating-in-oil-and-gas/well-production/midstream/pipeline-integrity/pipeline-integrity-monitoring-and-leak-detection\">SLB：管道完整性与泄漏监测</a>；<a href=\"https://www.slb.com/products-and-services/delivering-digital-at-scale/software/olga/olga-pipeline-management/olga-pipeline-corrosion\">SLB：腐蚀环境影响因素</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归方法原理</a>。简化生成式与代码为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "储罐液位与泄漏智能监控：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 对齐液位和流量时间",
+          "role": "数据",
+          "do": "雷达液位、视觉读数代理与已知净入流统一时钟、单位与数据来源。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习正常残差尺度",
+          "role": "学习",
+          "do": "物料平衡 + 学习正常残差；隔离标定或正常训练数据。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 按五分钟物料平衡检测",
+          "role": "推理",
+          "do": "净入流与几何 → 液位预测 → 窗口残差 → 多源复核；实时滑块改变教学条件。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 显示双读数与低位基线",
+          "role": "验收",
+          "do": "与同条件基线对照并导出 CSV，明确 视觉仅为数值代理，不实现视频识别；异常残差不等于已确认泄漏。",
+          "effect": "基线比较或来源审核",
+          "trap": "视觉仅为数值代理，不实现视频识别；异常残差不等于已确认泄漏。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>净入流与几何 → 液位预测 → 窗口残差 → 多源复核</p><p>检测用 F1、误报及漏报；回归用独立真值 MAE；优化比较同需求功率并检查容量与流量守恒；外推明确假设阈值。异常分数不是经现场校准的事故概率。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "视觉仅为数值代理，不实现视频识别；异常残差不等于已确认泄漏。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

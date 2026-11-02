@@ -1,0 +1,137 @@
+{
+  "id": "refining-audit-v22",
+  "sceneId": "r4",
+  "title": "化验数据智能审核：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "化验报告影响过程判断与产品放行。缺失、单位和录入错误可能违背范围规则，单项合理的数值也可能与同批次数据关系不一致。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "固定文本抽取 + 范围规则 + 正常关系回归",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "待复核标记、残差与原始证据",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "固定格式正则不是通用语言理解，合成指标关系不是实际通用规律，不改写原值或判定产品合格。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"加工专业概念图\"><g font-size=\"17\" fill=\"#345647\"><rect x=\"20\" y=\"35\" width=\"160\" height=\"100\" fill=\"#e2eddb\"/><text x=\"35\" y=\"75\">过程观测 / 化验</text><path d=\"M195 80H265\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"290\" y=\"60\">时间与批次隔离 → 模型 → 验证</text><text x=\"290\" y=\"115\">异常和区间均需人工复核</text></g></svg><p>化验报告影响过程判断与产品放行。缺失、单位和录入错误可能违背范围规则，单项合理的数值也可能与同批次数据关系不一致。</p><p>概念示意，非实际设备或装置工艺图。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：带编号原始短报告、单位和正常指标关系。方法：固定文本抽取 + 范围规则 + 正常关系回归。输出：待复核标记、残差与原始证据。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>保留编号原文单位</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习正常指标关系</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>范围与残差联合审核</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>逐条引用供人工核实</p><small>误差与来源</small></div></div><p>原文保留 → 字段抽取 → 规则与关系审核 → 人工复核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需要 带编号原始短报告、单位和正常指标关系，按原料批次、装置运行周期、设备或连续时间块留出验收；应校验单位、采样与化验时滞，保留独立验证来源。</p><p>全部为合成数据。收率、FCC、正常化验关系和软测量从 400 个独立样本学习；软测量另有 100 个独立校准点。设备趋势仅拟合前 70 天，未来 30 天用于验证。固定训练种子 17，测试初始种子 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>固定格式正则不是通用语言理解，合成指标关系不是实际通用规律，不改写原值或判定产品合格。</p><p><a href=\"https://www.honeywell.com/us/en/industries/oil-gas/refining\">Honeywell：炼油与常减压优化</a>；<a href=\"https://www.axens.net/expertise/oil-refining/catalytic-cracking\">Axens：催化裂化产物与工况</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">回归方法原理</a>。教学生成式与实现不代表这些机构的模型或性能。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "化验数据智能审核：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 保留编号原文单位",
+          "role": "数据",
+          "do": "带编号原始短报告、单位和正常指标关系按来源、单位、时间与批次规范。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习正常指标关系",
+          "role": "学习",
+          "do": "固定文本抽取 + 范围规则 + 正常关系回归；不让测试标签进入预测。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 范围与残差联合审核",
+          "role": "推理",
+          "do": "原文保留 → 字段抽取 → 规则与关系审核 → 人工复核；滑块改变当前教学条件。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 逐条引用供人工核实",
+          "role": "验收",
+          "do": "检查基线、约束或独立验证指标，明确 固定格式正则不是通用语言理解，合成指标关系不是实际通用规律，不改写原值或判定产品合格。",
+          "effect": "基线比较或来源审核",
+          "trap": "固定格式正则不是通用语言理解，合成指标关系不是实际通用规律，不改写原值或判定产品合格。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>原文保留 → 字段抽取 → 规则与关系审核 → 人工复核</p><p>代理和软测量用独立 MAE；FCC另检查非负和总和；趋势只评价留出段；审核用 F1、误报漏报并保留原文；区间检查实测覆盖率，不保证每个样本覆盖。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "固定格式正则不是通用语言理解，合成指标关系不是实际通用规律，不改写原值或判定产品合格。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

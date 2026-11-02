@@ -1,0 +1,137 @@
+{
+  "id": "seismic-reservoir-v22",
+  "sceneId": "s4",
+  "title": "储层参数反演：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "孔隙度是孔隙体积占总体积的比例，影响储集空间。地震属性与孔隙度间是间接关系；相同属性可能来自不同岩性、流体或埋深。",
+      "judge": [
+        {
+          "label": "智能化任务",
+          "value": "邻域回归",
+          "desc": "浏览器实际计算 k 近邻"
+        },
+        {
+          "label": "数据来源",
+          "value": "合成",
+          "desc": "非现场资料、无工程精度承诺"
+        },
+        {
+          "label": "评价指标",
+          "value": "MAE / 百分点",
+          "desc": "留出测试与传统基线对比"
+        },
+        {
+          "label": "范围",
+          "value": "教学",
+          "desc": "地震带宽有限，反演有多解；本演示关系式不能用于现场预测。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "GEOLOGY",
+          "title": "从石油问题理解数据",
+          "html": "<figure style=\"margin:12px 0\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 180\" role=\"img\" aria-label=\"储层参数反演：交互式学习实验专业概念图\"><rect width=\"740\" height=\"180\" fill=\"#f0f5ec\"/><g font-size=\"15\" fill=\"#314f43\"><circle cx=\"25\" cy=\"45\" r=\"4\" fill=\"#277b69\"/><circle cx=\"37\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"49\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"61\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"73\" cy=\"45\" r=\"4\" fill=\"#277b69\"/><circle cx=\"85\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"97\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"109\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"121\" cy=\"45\" r=\"4\" fill=\"#277b69\"/><circle cx=\"133\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"145\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"157\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"169\" cy=\"45\" r=\"4\" fill=\"#277b69\"/><circle cx=\"181\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"193\" cy=\"45\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"25\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"37\" cy=\"62\" r=\"4\" fill=\"#277b69\"/><circle cx=\"49\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"61\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"73\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"85\" cy=\"62\" r=\"4\" fill=\"#277b69\"/><circle cx=\"97\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"109\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"121\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"133\" cy=\"62\" r=\"4\" fill=\"#277b69\"/><circle cx=\"145\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"157\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"169\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"181\" cy=\"62\" r=\"4\" fill=\"#277b69\"/><circle cx=\"193\" cy=\"62\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"25\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"37\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"49\" cy=\"79\" r=\"4\" fill=\"#277b69\"/><circle cx=\"61\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"73\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"85\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"97\" cy=\"79\" r=\"4\" fill=\"#277b69\"/><circle cx=\"109\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"121\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"133\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"145\" cy=\"79\" r=\"4\" fill=\"#277b69\"/><circle cx=\"157\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"169\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"181\" cy=\"79\" r=\"4\" fill=\"#c7b28d\"/><circle cx=\"193\" cy=\"79\" r=\"4\" fill=\"#277b69\"/><text x=\"230\" y=\"55\">绿色孔隙 / 米色颗粒</text><text x=\"230\" y=\"90\">φ = 孔隙体积 ÷ 岩石总体积</text><text x=\"230\" y=\"125\">孔隙 → 储集空间；连通性 → 渗流能力</text></g></svg><figcaption>孔隙度高不代表渗透率一定高；本图只解释体积分数概念。 示意图，非现场资料。</figcaption></figure><p>孔隙度是孔隙体积占总体积的比例，影响储集空间。地震属性与孔隙度间是间接关系；相同属性可能来自不同岩性、流体或埋深。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 150\" role=\"img\" aria-label=\"地震资料到智能解释的映射\"><rect width=\"760\" height=\"150\" fill=\"#eef5ef\"/><g fill=\"#286f60\" font-size=\"16\"><text x=\"20\" y=\"30\">石油问题 → 可计算特征 → 学习映射 → 解释候选</text><text x=\"20\" y=\"72\">合成振幅属性与阻抗属性</text><text x=\"20\" y=\"112\">输出：孔隙度 φ / %</text></g></svg><p>示意图表达输入与输出的关系，不按真实地层比例绘制。</p>"
+        },
+        {
+          "no": 2,
+          "en": "LEARNING",
+          "title": "智能方法究竟学什么",
+          "html": "<p>从独立训练样本建立固定 kNN 邻域索引，以当前含噪输入提取特征，分类投票或回归邻居均值。调整 k 会改变邻域聚合，不重新生成训练数据。所有结果在浏览器中实际计算；测试真值只供验收。</p><p>以合成振幅属性与阻抗属性作为输入，以孔隙度 φ / %作为学习目标。使用固定独立合成样本建立 k 近邻模型，再对测试资料预测。颜色、曲线和指标来自计算结果。</p><p>生产升级方向：断层采用分割网络，地震相采用纹理表示学习，初至采用序列分割，反演采用带井约束回归，去噪采用自监督网络。本演示不宣称实现这些深度网络。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据与验证设计",
+          "html": "<p>井震标定后的地震属性与岩心/测井孔隙度，按井留出测试并统一尺度。</p><p>演示训练种子 17，测试种子可切换；调节测试噪声可观察分布偏移。禁止将测试真值放入预测特征。</p><div style=\"display:flex;gap:8px\"><span style=\"background:#dceee3;padding:12px\">训练：建立邻域</span><span style=\"background:#f4ead6;padding:12px\">测试：仅计算误差</span></div>"
+        },
+        {
+          "no": 4,
+          "en": "LIMITS",
+          "title": "难点与参考资料",
+          "html": "<p>地震带宽有限，反演有多解；本演示关系式不能用于现场预测。</p><p><a href=\"https://scikit-learn.org/stable/modules/neighbors.html\" target=\"_blank\" rel=\"noopener\">近邻分类与回归：官方原理说明</a>；<a href=\"https://github.com/xinwucwp/faultSeg\" target=\"_blank\" rel=\"noopener\">FaultSeg3D 原作者代码：合成地震与断层分割参考</a>。实现为本项目原生 JavaScript，未调用这些库。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "从物理信号到可复核解释",
+      "lead": [
+        "点击第三个页签运行实验；本页每一步都对应演示中的数据、模型或指标。"
+      ],
+      "stats": [
+        [
+          "训练 / 测试",
+          "独立种子"
+        ],
+        [
+          "学习方法",
+          "kNN"
+        ],
+        [
+          "计算位置",
+          "浏览器"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 · 构造与划分",
+          "role": "流程",
+          "do": "生成独立训练样本与留出测试场景；固定种子，便于重复比较。",
+          "effect": "训练集 → 仅供模型拟合；测试集 → 仅供验收",
+          "trap": "相邻窗口随机拆分会造成数据泄漏。"
+        },
+        {
+          "name": "02 · 特征与标注",
+          "role": "流程",
+          "do": "把合成振幅属性与阻抗属性变成数值向量，以孔隙度 φ / %为监督目标。",
+          "effect": "原始信号 → 特征向量 x；解释标签 → y",
+          "trap": "合成规律过于简单会高估泛化能力。"
+        },
+        {
+          "name": "03 · 学习与预测",
+          "role": "流程",
+          "do": "使用 k 近邻回归，按特征距离找训练样本，分类投票或回归均值。",
+          "effect": "x → 最近的 k 个训练样本 → 输出 ŷ",
+          "trap": "k 太小会追随噪声，太大会平滑细节。"
+        },
+        {
+          "name": "04 · 可视验收",
+          "role": "流程",
+          "do": "与传统基线和合成真值比较，实时计算MAE / 百分点；观察误差出现在哪里。",
+          "effect": "真值 / 输入 / 基线 / 学习结果 → 定量复核",
+          "trap": "地震带宽有限，反演有多解；本演示关系式不能用于现场预测。"
+        }
+      ],
+      "metrics": {
+        "title": "评价口径",
+        "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 190\" role=\"img\" aria-label=\"数据到验收流程\"><rect x=\"2\" y=\"15\" width=\"172\" height=\"80\" rx=\"10\" fill=\"#e4efe7\"/><text x=\"12\" y=\"44\" font-size=\"17\" fill=\"#286d59\">01</text><text x=\"12\" y=\"76\" font-size=\"13\" fill=\"#263e34\">独立训练 / 测试</text><text x=\"12\" y=\"130\" font-size=\"12\" fill=\"#56695e\">防止数据泄漏</text><text x=\"176\" y=\"62\" font-size=\"16\">→</text><rect x=\"187\" y=\"15\" width=\"172\" height=\"80\" rx=\"10\" fill=\"#e4efe7\"/><text x=\"197\" y=\"44\" font-size=\"17\" fill=\"#286d59\">02</text><text x=\"197\" y=\"76\" font-size=\"13\" fill=\"#263e34\">特征向量 x</text><text x=\"197\" y=\"130\" font-size=\"12\" fill=\"#56695e\">让波形可比较</text><text x=\"361\" y=\"62\" font-size=\"16\">→</text><rect x=\"372\" y=\"15\" width=\"172\" height=\"80\" rx=\"10\" fill=\"#e4efe7\"/><text x=\"382\" y=\"44\" font-size=\"17\" fill=\"#286d59\">03</text><text x=\"382\" y=\"76\" font-size=\"13\" fill=\"#263e34\">邻域投票 / 均值</text><text x=\"382\" y=\"130\" font-size=\"12\" fill=\"#56695e\">把经验映射为预测</text><text x=\"546\" y=\"62\" font-size=\"16\">→</text><rect x=\"557\" y=\"15\" width=\"172\" height=\"80\" rx=\"10\" fill=\"#e4efe7\"/><text x=\"567\" y=\"44\" font-size=\"17\" fill=\"#286d59\">04</text><text x=\"567\" y=\"76\" font-size=\"13\" fill=\"#263e34\">真值对比 / 复核</text><text x=\"567\" y=\"130\" font-size=\"12\" fill=\"#56695e\">找到失败的位置</text></svg><p>指标：MAE / 百分点。分类用留出样本计数；断层 F1 = 2TP/(2TP+FP+FN)；初至误差按 2 ms 采样间隔换算；反演 MAE 为孔隙度百分点；SNR = 10 log10(信号能量/误差能量)。基线与学习结果使用同一测试数据。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 110\" role=\"img\" aria-label=\"四步计算链\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"15\" y=\"53\" font-size=\"14\" fill=\"#354449\">独立资料</text><rect x=\"178\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"193\" y=\"53\" font-size=\"14\" fill=\"#354449\">特征窗口</text><rect x=\"356\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"371\" y=\"53\" font-size=\"14\" fill=\"#354449\">近邻学习</text><rect x=\"534\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"549\" y=\"53\" font-size=\"14\" fill=\"#354449\">基线与错误核对</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "域偏移",
+          "why": "噪声、地层样式与训练条件不同时表现会变化。"
+        },
+        {
+          "name": "地质多解性",
+          "why": "地震带宽有限，反演有多解；本演示关系式不能用于现场预测。"
+        },
+        {
+          "name": "合成到真实",
+          "why": "教学结果不能替代真实井震标定和专家复核。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 820
+    }
+  }
+}

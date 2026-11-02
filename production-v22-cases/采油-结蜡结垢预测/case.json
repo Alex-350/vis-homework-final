@@ -1,0 +1,137 @@
+{
+  "id": "production-deposit-v22",
+  "sceneId": "pr5",
+  "title": "结蜡结垢预测：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "结蜡涉及原油蜡组分析出与沉积；结垢涉及水中无机物沉淀。二者都可能降低通流能力，但机制和需要的数据不同，不能混为同一种风险。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "双任务逻辑回归",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "结蜡和结垢的独立分数及报警",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "二维合成模型不替代析蜡温度或离子平衡计算，不直接生成清防作业周期。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"结蜡结垢预测专业概念示意\"><g fill=\"#354449\" font-size=\"14\"><rect x=\"20\" y=\"25\" width=\"300\" height=\"110\" rx=\"8\" fill=\"#e5efe8\"/><rect x=\"365\" y=\"25\" width=\"325\" height=\"110\" rx=\"8\" fill=\"#f2e7d9\"/><text x=\"40\" y=\"65\">结蜡：原油组分析出与沉积</text><text x=\"40\" y=\"105\">关注冷却和原油性质</text><text x=\"385\" y=\"65\">结垢：水中无机物沉淀</text><text x=\"385\" y=\"105\">关注水化学和成垢倾向</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"采油概念图\"><rect width=\"760\" height=\"170\" fill=\"#edf4e8\"/><g font-size=\"17\" fill=\"#345647\"><text x=\"20\" y=\"40\">结蜡结垢预测</text><text x=\"20\" y=\"85\">分别定义机制 → 各自训练 → 分别评分 → 复核措施</text><text x=\"20\" y=\"130\">生产观测与机理认识 → 学习或优化 → 与基线比较 → 人工复核</text></g></svg><p>结蜡涉及原油蜡组分析出与沉积；结垢涉及水中无机物沉淀。二者都可能降低通流能力，但机制和需要的数据不同，不能混为同一种风险。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：冷却、原油与水化学的二维教学代理。方法：双任务逻辑回归。输出：结蜡和结垢的独立分数及报警。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>区分结蜡和结垢标签</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>分别训练逻辑回归</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>独立测试两任务</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>各自比较单阈值基线</p><small>误差与来源</small></div></div><p>分别定义机制 → 各自训练 → 分别评分 → 复核措施。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需要 冷却、原油与水化学的二维教学代理，并结合生产、作业与检修记录校验。按独立井、连续时间块或作业周期划分测试；产量预测必须按时间向后留出。</p><p>全部为教学合成数据：形态分类用 360 个训练点；各层响应用 150 个训练点；电泵正常参考用 400 点；结蜡、结垢各用 600 个训练事件。产量模型只拟合滑块指定的前 N 天。固定训练种子 17，测试种子初始 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>二维合成模型不替代析蜡温度或离子平衡计算，不直接生成清防作业周期。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-rod-pumps\">SLB：抽油泵与泵卡</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">线性回归与逻辑回归原理</a>。生成式和示范为独立教学实现，不宣称现场精度。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "结蜡结垢预测：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 区分结蜡和结垢标签",
+          "role": "数据",
+          "do": "冷却、原油与水化学的二维教学代理按井、时间和作业周期对齐。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 分别训练逻辑回归",
+          "role": "学习",
+          "do": "双任务逻辑回归；严格隔离留出数据。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 独立测试两任务",
+          "role": "推理",
+          "do": "分别定义机制 → 各自训练 → 分别评分 → 复核措施；滑块控制当前教学条件。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 各自比较单阈值基线",
+          "role": "验收",
+          "do": "按同一测试资料比较模型与基线，导出 CSV 并复核 二维合成模型不替代析蜡温度或离子平衡计算，不直接生成清防作业周期。",
+          "effect": "基线比较或来源审核",
+          "trap": "二维合成模型不替代析蜡温度或离子平衡计算，不直接生成清防作业周期。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>分别定义机制 → 各自训练 → 分别评分 → 复核措施</p><p>分类用准确率；预测只在未来留出段计算 MAE；注水比较同预算目标并检查总量；预警及结蜡结垢分别计算 F1、误报漏报。学习分数未经现场概率校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "二维合成模型不替代析蜡温度或离子平衡计算，不直接生成清防作业周期。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

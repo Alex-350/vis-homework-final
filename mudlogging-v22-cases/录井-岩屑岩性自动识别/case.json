@@ -1,0 +1,137 @@
+{
+  "id": "mudlogging-cuttings-v22",
+  "sceneId": "m1",
+  "title": "岩屑岩性自动识别：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "岩屑是钻头破碎的岩石碎片，随钻井液返出后被捞取、清洗和观察。颜色、粒度和纹理可辅助岩性描述，但混样、污染和光照会影响识别。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "最近类中心分类 + 曝光归一化",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "岩性类别、组分统计的基础",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "仅分类合成特征，未处理真实显微图像，也未实现混合岩性多标签识别。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"岩屑岩性自动识别概念图\"><rect width=\"760\" height=\"180\" fill=\"#eef4e9\"/><circle cx=\"25\" cy=\"35\" r=\"12\" fill=\"#c59048\"/><circle cx=\"60\" cy=\"35\" r=\"12\" fill=\"#74876d\"/><circle cx=\"95\" cy=\"35\" r=\"12\" fill=\"#a6b4b2\"/><circle cx=\"130\" cy=\"35\" r=\"12\" fill=\"#c59048\"/><circle cx=\"165\" cy=\"35\" r=\"12\" fill=\"#74876d\"/><circle cx=\"25\" cy=\"80\" r=\"12\" fill=\"#a6b4b2\"/><circle cx=\"60\" cy=\"80\" r=\"12\" fill=\"#c59048\"/><circle cx=\"95\" cy=\"80\" r=\"12\" fill=\"#74876d\"/><circle cx=\"130\" cy=\"80\" r=\"12\" fill=\"#a6b4b2\"/><circle cx=\"165\" cy=\"80\" r=\"12\" fill=\"#c59048\"/><circle cx=\"25\" cy=\"125\" r=\"12\" fill=\"#74876d\"/><circle cx=\"60\" cy=\"125\" r=\"12\" fill=\"#a6b4b2\"/><circle cx=\"95\" cy=\"125\" r=\"12\" fill=\"#c59048\"/><circle cx=\"130\" cy=\"125\" r=\"12\" fill=\"#74876d\"/><circle cx=\"165\" cy=\"125\" r=\"12\" fill=\"#a6b4b2\"/><text x=\"220\" y=\"70\" font-size=\"18\" fill=\"#345648\">粒度 / 纹理 / 色调 → 岩性候选</text></svg><p>概念示意，非真实样品或现场曲线。</p><p>岩屑是钻头破碎的岩石碎片，随钻井液返出后被捞取、清洗和观察。颜色、粒度和纹理可辅助岩性描述，但混样、污染和光照会影响识别。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：色调和纹理的二维合成特征。方法：最近类中心分类 + 曝光归一化。输出：岩性类别、组分统计的基础。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>采样与标定</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>提取颜色纹理</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>学习类别中心</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>混淆矩阵复核</p><small>误差与来源</small></div></div><p>曝光变化 → 特征偏移 → 标定校正 → 分类。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的色调和纹理的二维合成特征，并由录井解释或验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；图像案例使用特征代理，不加载真实图像。报告训练与测试语料独立，规模仅作原理说明。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>仅分类合成特征，未处理真实显微图像，也未实现混合岩性多标签识别。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-mud-logging\">SLB：录井、迟到与荧光概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/naive_bayes.html\">朴素贝叶斯原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "岩屑岩性自动识别：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 采样与标定",
+          "role": "数据",
+          "do": "固定光照、曝光与样品处理，按样品或井划分训练测试。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 提取颜色纹理",
+          "role": "学习",
+          "do": "360 个训练特征向量计算各级/类均值，建立类中心。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 学习类别中心",
+          "role": "推理",
+          "do": "用已知曝光倍率归一化，再将测试特征分到最近类中心。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 混淆矩阵复核",
+          "role": "验收",
+          "do": "120 个独立测试样本计算准确率与混淆矩阵，与未校正基线比较。",
+          "effect": "基线比较或来源审核",
+          "trap": "仅分类合成特征，未处理真实显微图像，也未实现混合岩性多标签识别。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>采样与标定</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>提取颜色纹理</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>学习类别中心</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>混淆矩阵复核</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "曝光、污染、脱气效率或钻井参数变化可造成分布漂移。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "岩屑混样、迟到校正与解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "仅分类合成特征，未处理真实显微图像，也未实现混合岩性多标签识别。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

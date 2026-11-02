@@ -1,0 +1,137 @@
+{
+  "id": "perforation-optimize-v22",
+  "sceneId": "p1",
+  "title": "射孔参数优化：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "孔密、穿深和相位影响井筒与储层的流入通道，参数选择还需考虑地层损伤、出砂和成本。单纯增加通道数量不保证工程上更优。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "产能代理 + 带成本惩罚的约束搜索",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "可行组合与教学目标排名",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "目标和代价均为教学指数，不是实际产量或经济评价；不代替射孔设计。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"射孔专业概念\"><g font-size=\"17\" fill=\"#345647\"><rect x=\"25\" y=\"25\" width=\"170\" height=\"110\" rx=\"10\" fill=\"#e0eddb\"/><text x=\"40\" y=\"65\">条件与参数</text><text x=\"40\" y=\"110\">规则与代理</text><path d=\"M205 80H275\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"300\" y=\"70\">可行性 → 目标比较 → 候选</text><text x=\"300\" y=\"120\">保留失败、淘汰和无解的理由</text></g></svg><p>孔密、穿深和相位影响井筒与储层的流入通道，参数选择还需考虑地层损伤、出砂和成本。单纯增加通道数量不保证工程上更优。</p><p>概念示意，非真实孔道图或设计参数。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：合成孔密、穿深、相位与损伤特征。方法：产能代理 + 带成本惩罚的约束搜索。输出：可行组合与教学目标排名。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>建立独立样本</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>拟合产能代理</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>约束并扣除成本</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>输出候选或无解</p><small>误差与来源</small></div></div><p>组合 → 产能代理 → 代价筛选 → 扣成本排序。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需要 合成孔密、穿深、相位与损伤特征，并按独立井、试验批次或工况组隔离验证，不能让相邻样本泄漏。演示全部为教学合成数据。</p><p>训练种子 17；回归代理用 500 条独立样本。虚拟选型采用规则检索不训练；效果评估从当前独立观测进行最小二乘反演。测试初始种子 91。测试真值只用于验收。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>目标和代价均为教学指数，不是实际产量或经济评价；不代替射孔设计。</p><p><a href=\"https://glossary.slb.com/Terms/p/perforation_penetration.aspx\">SLB：射孔穿深</a>；<a href=\"https://glossary.slb.com/terms/c/crushed_zone\">SLB：压碎带概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性回归原理</a>。合成公式和示范为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "射孔参数优化：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 建立独立样本",
+          "role": "数据",
+          "do": "合成孔密、穿深、相位与损伤特征按来源和单位整理，独立批次留出验收。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 拟合产能代理",
+          "role": "学习",
+          "do": "产能代理 + 带成本惩罚的约束搜索：明确输入、输出和适用条件。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 约束并扣除成本",
+          "role": "推理",
+          "do": "组合 → 产能代理 → 代价筛选 → 扣成本排序；滑块控制当前教学输入。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 输出候选或无解",
+          "role": "验收",
+          "do": "对照结果和基线，导出 CSV，检查 目标和代价均为教学指数，不是实际产量或经济评价；不代替射孔设计。",
+          "effect": "基线比较或来源审核",
+          "trap": "目标和代价均为教学指数，不是实际产量或经济评价；不代替射孔设计。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>组合 → 产能代理 → 代价筛选 → 扣成本排序</p><p>回归用 MAE 与固定基线比较；反演用 RMSE 和误差目标曲线；选型检查兼容与引用；优化检查可行性和扣成本后的目标。所有评分、规则和数值均不代表工程标准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "目标和代价均为教学指数，不是实际产量或经济评价；不代替射孔设计。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

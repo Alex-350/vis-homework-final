@@ -1,0 +1,137 @@
+{
+  "id": "perforation-evaluate-v22",
+  "sceneId": "p4",
+  "title": "射孔效果智能评估：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "压力与产量的关系可反映井的综合流入能力。射孔损伤是影响因素之一，渗透率、流体、厚度和其他近井效应同样重要，因此反演有解释多解性。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "最小二乘产能系数反演",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "拟合产能系数、误差与参考比值",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "只拟合简化单相线性关系，不反演表皮系数，不把产能比直接叫作射孔独有效率。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"射孔专业概念\"><g font-size=\"17\" fill=\"#345647\"><path d=\"M30 150V25M30 150H220M45 135L200 45\" fill=\"none\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"260\" y=\"70\">液量 q = 产能系数 J × 压差 Δp</text><text x=\"260\" y=\"120\">拟合 J 不等于识别唯一射孔原因</text></g></svg><p>压力与产量的关系可反映井的综合流入能力。射孔损伤是影响因素之一，渗透率、流体、厚度和其他近井效应同样重要，因此反演有解释多解性。</p><p>概念示意，非真实孔道图或设计参数。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：合成压差与含噪液量试验点。方法：最小二乘产能系数反演。输出：拟合产能系数、误差与参考比值。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>规范压差和产量单位</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>建立线性观测模型</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>最小二乘求系数</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>参考对比并解释多解性</p><small>误差与来源</small></div></div><p>压差 / 液量 → 误差最小化 → 系数 → 综合解释。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需要 合成压差与含噪液量试验点，并按独立井、试验批次或工况组隔离验证，不能让相邻样本泄漏。演示全部为教学合成数据。</p><p>训练种子 17；回归代理用 500 条独立样本。虚拟选型采用规则检索不训练；效果评估从当前独立观测进行最小二乘反演。测试初始种子 91。测试真值只用于验收。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>只拟合简化单相线性关系，不反演表皮系数，不把产能比直接叫作射孔独有效率。</p><p><a href=\"https://glossary.slb.com/Terms/p/perforation_penetration.aspx\">SLB：射孔穿深</a>；<a href=\"https://glossary.slb.com/terms/c/crushed_zone\">SLB：压碎带概念</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">官方线性回归原理</a>。合成公式和示范为独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "射孔效果智能评估：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 规范压差和产量单位",
+          "role": "数据",
+          "do": "合成压差与含噪液量试验点按来源和单位整理，独立批次留出验收。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 建立线性观测模型",
+          "role": "学习",
+          "do": "最小二乘产能系数反演：明确输入、输出和适用条件。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 最小二乘求系数",
+          "role": "推理",
+          "do": "压差 / 液量 → 误差最小化 → 系数 → 综合解释；滑块控制当前教学输入。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 参考对比并解释多解性",
+          "role": "验收",
+          "do": "对照结果和基线，导出 CSV，检查 只拟合简化单相线性关系，不反演表皮系数，不把产能比直接叫作射孔独有效率。",
+          "effect": "基线比较或来源审核",
+          "trap": "只拟合简化单相线性关系，不反演表皮系数，不把产能比直接叫作射孔独有效率。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>压差 / 液量 → 误差最小化 → 系数 → 综合解释</p><p>回归用 MAE 与固定基线比较；反演用 RMSE 和误差目标曲线；选型检查兼容与引用；优化检查可行性和扣成本后的目标。所有评分、规则和数值均不代表工程标准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "只拟合简化单相线性关系，不反演表皮系数，不把产能比直接叫作射孔独有效率。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

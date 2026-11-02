@@ -1,0 +1,137 @@
+{
+  "id": "mudlogging-report-v22",
+  "sceneId": "m5",
+  "title": "录井报告自动生成：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "录井报告把分层、岩屑描述、气测显示与工况记录整合成可审核文本。自动生成的关键是事实与来源一致、缺失不补造、判断可追溯。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "朴素贝叶斯文本分类 + 证据模板生成",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "分类后的报告初稿及逐条来源引用",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "仅用微型语料演示，不调用大语言模型；词频分类不能理解否定和复杂语境，模板生成仍需人工审核。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"录井报告自动生成概念图\"><rect width=\"760\" height=\"180\" fill=\"#eef4e9\"/><g fill=\"#345648\" font-size=\"18\"><text x=\"20\" y=\"55\">R01 岩屑记录</text><text x=\"20\" y=\"95\">R02 气测显示</text><text x=\"20\" y=\"135\">R03 工况记录</text><text x=\"250\" y=\"90\">→ 分类 / 抽取 → 带引用报告 → 人工审核</text></g></svg><p>概念示意，非真实样品或现场曲线。</p><p>录井报告把分层、岩屑描述、气测显示与工况记录整合成可审核文本。自动生成的关键是事实与来源一致、缺失不补造、判断可追溯。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：带编号的短录井记录与深度信息。方法：朴素贝叶斯文本分类 + 证据模板生成。输出：分类后的报告初稿及逐条来源引用。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>清洗并保留来源</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>训练词频分类器</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>抽取深度与填模板</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>低分转人工审核</p><small>误差与来源</small></div></div><p>记录 → 文本分类 → 深度抽取 → 引用与审核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的带编号的短录井记录与深度信息，并由录井解释或验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；图像案例使用特征代理，不加载真实图像。报告训练与测试语料独立，规模仅作原理说明。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>仅用微型语料演示，不调用大语言模型；词频分类不能理解否定和复杂语境，模板生成仍需人工审核。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-mud-logging\">SLB：录井、迟到与荧光概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/naive_bayes.html\">朴素贝叶斯原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "录井报告自动生成：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 清洗并保留来源",
+          "role": "数据",
+          "do": "保留 R 编号、原始文本和深度；缺失字段不得补造。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 训练词频分类器",
+          "role": "学习",
+          "do": "用九条训练短记录统计各类词频，采用拉普拉斯平滑。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 抽取深度与填模板",
+          "role": "推理",
+          "do": "计算测试文本各类后验分数，用正则提取四位深度，套入模板。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 低分转人工审核",
+          "role": "验收",
+          "do": "低于阈值标记待人工分类，报告每句保留原文证据。",
+          "effect": "基线比较或来源审核",
+          "trap": "仅用微型语料演示，不调用大语言模型；词频分类不能理解否定和复杂语境，模板生成仍需人工审核。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>清洗并保留来源</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>训练词频分类器</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>抽取深度与填模板</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>低分转人工审核</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "曝光、污染、脱气效率或钻井参数变化可造成分布漂移。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "岩屑混样、迟到校正与解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "仅用微型语料演示，不调用大语言模型；词频分类不能理解否定和复杂语境，模板生成仍需人工审核。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

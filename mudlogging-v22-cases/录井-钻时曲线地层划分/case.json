@@ -1,0 +1,137 @@
+{
+  "id": "mudlogging-layers-v22",
+  "sceneId": "m4",
+  "title": "钻时曲线地层划分：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "钻时是钻进单位进尺所需时间，受岩石可钻性影响，也受钻压、转速等工况影响。突变可提示层界，但不能单独作为地层界面的充分证据。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "监督类中心 + 序列多数平滑",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "逐点层类与候选层界",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "本例三层宽度较大，未模拟薄互层或岩屑迟到校正；大平滑窗可能抹掉薄层。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 180\" role=\"img\" aria-label=\"钻时曲线地层划分概念图\"><rect width=\"760\" height=\"180\" fill=\"#eef4e9\"/><polyline points=\"20,125 24,125 28,125 32,125 36,125 40,125 44,125 48,125 52,125 56,125 60,125 64,125 68,125 72,125 76,125 80,125 84,125 88,125 92,125 96,125 100,125 104,125 108,125 112,125 116,125 120,125 124,125 128,125 132,125 136,125 140,55 144,55 148,55 152,55 156,55 160,55 164,55 168,55 172,55 176,55 180,55 184,55 188,55 192,55 196,55 200,55 204,55 208,55 212,55 216,55 220,55 224,55 228,55 232,55 236,55 240,55 244,55 248,55 252,55 256,55 260,90 264,90 268,90 272,90 276,90 280,90 284,90 288,90 292,90 296,90 300,90 304,90 308,90 312,90 316,90 320,90 324,90 328,90 332,90 336,90 340,90 344,90 348,90 352,90 356,90 360,90 364,90 368,90 372,90 376,90\" fill=\"none\" stroke=\"#43836b\" stroke-width=\"4\"/><text x=\"400\" y=\"90\" font-size=\"17\" fill=\"#345648\">钻时变化 ≠ 必然地层界面</text></svg><p>概念示意，非真实样品或现场曲线。</p><p>钻时是钻进单位进尺所需时间，受岩石可钻性影响，也受钻压、转速等工况影响。突变可提示层界，但不能单独作为地层界面的充分证据。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：钻时及辅助录井的二维合成特征。方法：监督类中心 + 序列多数平滑。输出：逐点层类与候选层界。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>统一深度与工况</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习多特征类别</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>投票平滑序列</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>容差匹配层界</p><small>误差与来源</small></div></div><p>逐点分类 → 滑窗投票 → 类别切换 → 层界。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>真实应用需要同井段配对的钻时及辅助录井的二维合成特征，并由录井解释或验证资料提供标签。先做小规模概念验证，再按井、样品或连续时间块留出测试，避免相邻样本泄漏。</p><p>本演示训练种子 17、测试初始种子 91；图像案例使用特征代理，不加载真实图像。报告训练与测试语料独立，规模仅作原理说明。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>本例三层宽度较大，未模拟薄互层或岩屑迟到校正；大平滑窗可能抹掉薄层。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-mud-logging\">SLB：录井、迟到与荧光概念</a>；<a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestCentroid.html\">最近类中心原理</a>；<a href=\"https://scikit-learn.org/stable/modules/naive_bayes.html\">朴素贝叶斯原理</a>。合成公式与示范为本项目独立教学实现。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "钻时曲线地层划分：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 统一深度与工况",
+          "role": "数据",
+          "do": "按深度对齐钻时与辅助录井特征，独立井划分数据。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习多特征类别",
+          "role": "学习",
+          "do": "360 个合成训练点学习三类特征中心。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 投票平滑序列",
+          "role": "推理",
+          "do": "最近中心逐点分类，再用滑动窗口多数投票平滑。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 容差匹配层界",
+          "role": "验收",
+          "do": "对类别变化点提取层界，在 ±2 m 容差内一对一匹配真值。",
+          "effect": "基线比较或来源审核",
+          "trap": "本例三层宽度较大，未模拟薄互层或岩屑迟到校正；大平滑窗可能抹掉薄层。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>统一深度与工况</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习多特征类别</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>投票平滑序列</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>容差匹配层界</p><small>误差与来源</small></div></div><p>分类准确率 = 正确数 / 测试数；F1 = 2TP/(2TP+FP+FN)。层界按 ±2 m 一对一匹配；报告引用覆盖率仅表示有来源，不等于语义正确率。后验分数未经校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "曝光、污染、脱气效率或钻井参数变化可造成分布漂移。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "岩屑混样、迟到校正与解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "本例三层宽度较大，未模拟薄互层或岩屑迟到校正；大平滑窗可能抹掉薄层。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}

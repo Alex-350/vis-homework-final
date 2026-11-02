@@ -1,0 +1,137 @@
+{
+  "id": "production-card-v22",
+  "sceneId": "pr1",
+  "title": "抽油机井工况诊断：交互式学习实验",
+  "status": "ready",
+  "version": "2.2.0",
+  "updated": "2026-11-02",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "示功图记录抽油杆或泵的载荷与位移关系。理想井下泵卡近似矩形，充液不足和泄漏等会改变形状；地面卡还受杆柱波动影响。",
+      "judge": [
+        {
+          "label": "方法",
+          "value": "形态特征类中心分类",
+          "desc": "纯前端实际计算"
+        },
+        {
+          "label": "数据",
+          "value": "教学合成",
+          "desc": "独立训练与测试"
+        },
+        {
+          "label": "输出",
+          "value": "三类工况候选与误判对比",
+          "desc": "可视化与 CSV"
+        },
+        {
+          "label": "范围",
+          "value": "教学演示",
+          "desc": "未提取真实地面示功图特征，不实现地面到井下卡转换或复合故障诊断。"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONCEPT",
+          "title": "专业概念与背景",
+          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 165\" role=\"img\" aria-label=\"抽油机井工况诊断专业概念示意\"><g fill=\"#354449\" font-size=\"14\"><path d=\"M25 120V35H160V120Z\" fill=\"none\" stroke=\"#2f7d6b\" stroke-width=\"4\"/><path d=\"M210 120V35H345L285 120Z\" fill=\"none\" stroke=\"#b26a39\" stroke-width=\"4\"/><text x=\"390\" y=\"65\">载荷—位移闭合图的形状提供线索</text><text x=\"390\" y=\"105\">充液不足可能改变卸载形态</text></g></svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 760 170\" role=\"img\" aria-label=\"采油概念图\"><rect width=\"760\" height=\"170\" fill=\"#edf4e8\"/><g font-size=\"17\" fill=\"#345647\"><text x=\"20\" y=\"40\">抽油机井工况诊断</text><text x=\"20\" y=\"85\">载荷 / 位移 → 形态代理 → 监督分类 → 人工复核</text><text x=\"20\" y=\"130\">生产观测与机理认识 → 学习或优化 → 与基线比较 → 人工复核</text></g></svg><p>示功图记录抽油杆或泵的载荷与位移关系。理想井下泵卡近似矩形，充液不足和泄漏等会改变形状；地面卡还受杆柱波动影响。</p>"
+        },
+        {
+          "no": 2,
+          "en": "AI",
+          "title": "方法与介入点",
+          "html": "<p>输入：合成面积和卸载形态特征。方法：形态特征类中心分类。输出：三类工况候选与误判对比。</p><div style=\"display:flex;flex-wrap:wrap;gap:10px\"><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>01</b><p>统一载荷位移采样</p><small>输入与标签</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>02</b><p>学习三类形态中心</p><small>模型与特征</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>03</b><p>独立测试分类</p><small>预测与决策</small></div><div style=\"background:#e6efe3;padding:14px;flex:1;min-width:135px\"><b>04</b><p>对照基线和错误样本</p><small>误差与来源</small></div></div><p>载荷 / 位移 → 形态代理 → 监督分类 → 人工复核。</p>"
+        },
+        {
+          "no": 3,
+          "en": "DATA",
+          "title": "数据要求与验证",
+          "html": "<p>现场需要 合成面积和卸载形态特征，并结合生产、作业与检修记录校验。按独立井、连续时间块或作业周期划分测试；产量预测必须按时间向后留出。</p><p>全部为教学合成数据：形态分类用 360 个训练点；各层响应用 150 个训练点；电泵正常参考用 400 点；结蜡、结垢各用 600 个训练事件。产量模型只拟合滑块指定的前 N 天。固定训练种子 17，测试种子初始 91。</p>"
+        },
+        {
+          "no": 4,
+          "en": "LIMIT",
+          "title": "局限与参考",
+          "html": "<p>未提取真实地面示功图特征，不实现地面到井下卡转换或复合故障诊断。</p><p><a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-rod-pumps\">SLB：抽油泵与泵卡</a>；<a href=\"https://scikit-learn.org/stable/modules/linear_model.html\">线性回归与逻辑回归原理</a>。生成式和示范为独立教学实现，不宣称现场精度。</p>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "抽油机井工况诊断：输入到验收",
+      "lead": [
+        "每一步均对应演示里的计算或证据。调节滑块观察成像、噪声、平滑或审核阈值的影响。"
+      ],
+      "stats": [
+        [
+          "运行",
+          "浏览器"
+        ],
+        [
+          "数据",
+          "合成"
+        ],
+        [
+          "输出",
+          "可导出"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "01 统一载荷位移采样",
+          "role": "数据",
+          "do": "合成面积和卸载形态特征按井、时间和作业周期对齐。",
+          "effect": "规范输入及标签",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "02 学习三类形态中心",
+          "role": "学习",
+          "do": "形态特征类中心分类；严格隔离留出数据。",
+          "effect": "可复用的训练模型",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "03 独立测试分类",
+          "role": "推理",
+          "do": "载荷 / 位移 → 形态代理 → 监督分类 → 人工复核；滑块控制当前教学条件。",
+          "effect": "可视预测与候选",
+          "trap": "现场需统一单位、校准采集条件，按井或样品留出验证。"
+        },
+        {
+          "name": "04 对照基线和错误样本",
+          "role": "验收",
+          "do": "按同一测试资料比较模型与基线，导出 CSV 并复核 未提取真实地面示功图特征，不实现地面到井下卡转换或复合故障诊断。",
+          "effect": "基线比较或来源审核",
+          "trap": "未提取真实地面示功图特征，不实现地面到井下卡转换或复合故障诊断。"
+        }
+      ],
+      "metrics": {
+        "title": "步骤映射与评价口径",
+        "html": "<p>载荷 / 位移 → 形态代理 → 监督分类 → 人工复核</p><p>分类用准确率；预测只在未来留出段计算 MAE；注水比较同预算目标并检查总量；预警及结蜡结垢分别计算 F1、误报漏报。学习分数未经现场概率校准。</p><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 720 105\" role=\"img\" aria-label=\"数据到决策与验收\"><rect x=\"0\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"12\" y=\"53\" fill=\"#354449\" font-size=\"14\">独立资料</text><rect x=\"180\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"192\" y=\"53\" fill=\"#354449\" font-size=\"14\">学习模型</text><rect x=\"360\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#e5efe8\"/><text x=\"372\" y=\"53\" fill=\"#354449\" font-size=\"14\">候选 / 预测</text><rect x=\"540\" y=\"10\" width=\"165\" height=\"75\" rx=\"7\" fill=\"#eee8db\"/><text x=\"552\" y=\"53\" fill=\"#354449\" font-size=\"14\">误差与约束复核</text></svg>"
+      },
+      "fails": [
+        {
+          "name": "采集与工况变化",
+          "why": "井况、浆体与地层压力变化可影响结果。"
+        },
+        {
+          "name": "标签与对齐",
+          "why": "深度归位、采样尺度与人工解释歧义可能影响真值。"
+        },
+        {
+          "name": "边界",
+          "why": "未提取真实地面示功图特征，不实现地面到井下卡转换或复合故障诊断。"
+        }
+      ]
+    },
+    "demo": {
+      "label": "可运行示范",
+      "mode": "page",
+      "html": "demo/index.html",
+      "height": 850
+    }
+  }
+}
